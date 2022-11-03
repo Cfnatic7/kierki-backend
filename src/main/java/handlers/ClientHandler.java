@@ -14,12 +14,6 @@ import java.net.Socket;
 
 public class ClientHandler extends Thread {
 
-    private Socket clientSocket;
-
-    private DataOutputStream dataOut;
-
-    private DataInputStream dataIn;
-
     private final LoginManager loginManager;
 
     private final RegisterManager registerManager;
@@ -32,14 +26,20 @@ public class ClientHandler extends Thread {
 
     private RoomHandler roomHandler;
 
-    public ClientHandler(Socket clientSocket) throws IOException {
-        this.clientSocket = clientSocket;
-        dataOut = new DataOutputStream(clientSocket.getOutputStream());
+    private final Socket roomSocket;
+
+    private final DataInputStream dataIn;
+
+    public ClientHandler(Socket clientSocket, Socket roomSocket) throws IOException {
+        DataOutputStream dataOut = new DataOutputStream(clientSocket.getOutputStream());
         dataIn = new DataInputStream(clientSocket.getInputStream());
+        DataOutputStream roomOut = new DataOutputStream(roomSocket.getOutputStream());
+        DataInputStream roomIn = new DataInputStream(roomSocket.getInputStream());
         isrunning = true;
         loginManager = new LoginManager(dataOut, dataIn);
         registerManager = new RegisterManager(dataOut, dataIn);
-        roomManager = new RoomManager(dataOut, dataIn);
+        roomManager = new RoomManager(dataOut, dataIn, roomOut, roomIn);
+        this.roomSocket = roomSocket;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ClientHandler extends Thread {
                     var user = loginManager.handleLogin();
                     if (user.isPresent()) {
                         loggedInUser = user.get();
-                        roomHandler = new RoomHandler(clientSocket, roomManager, loggedInUser);
+                        roomHandler = new RoomHandler(roomManager, loggedInUser);
                         roomHandler.start();
                     }
                 }
@@ -70,31 +70,6 @@ public class ClientHandler extends Thread {
                 kill();
             }
         }
-    }
-
-
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
-
-    public void setClientSocket(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-    }
-
-    public DataOutputStream getDataOut() {
-        return dataOut;
-    }
-
-    public void setDataOut(DataOutputStream dataOut) {
-        this.dataOut = dataOut;
-    }
-
-    public DataInputStream getDataIn() {
-        return dataIn;
-    }
-
-    public void setDataIn(DataInputStream dataIn) {
-        this.dataIn = dataIn;
     }
 
     public void kill() {

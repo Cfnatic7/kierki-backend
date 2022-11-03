@@ -18,7 +18,9 @@ public class RoomManager {
 
     private DataInputStream dataIn;
 
-    public RoomManager(DataOutputStream dataOut, DataInputStream dataIn) {
+
+
+    public RoomManager(DataOutputStream dataOut, DataInputStream dataIn, DataOutputStream roomOut, DataInputStream roomIn) {
         this.dataIn = dataIn;
         this.dataOut = dataOut;
     }
@@ -37,13 +39,12 @@ public class RoomManager {
             }
         }
 
-        int i = 0;
-        for (Socket clientSocket : Main.getClients()) {
-            DataOutputStream dataOut = new DataOutputStream(clientSocket.getOutputStream());
-            var room = Main.rooms.get(i);
-            dataOut.writeUTF(room.getRoomNumber().name());
-            dataOut.writeUTF(room.isFull() ? Responses.ROOM_FULL.name() : Responses.OK.name());
-            i++;
+        for (Socket roomSocket : Main.getRoomSockets()) {
+            DataOutputStream dataOut = new DataOutputStream(roomSocket.getOutputStream());
+            for (var room : Main.rooms) {
+                dataOut.writeUTF(room.getRoomNumber().name());
+                dataOut.writeUTF(room.isFull() ? Responses.ROOM_FULL.name() : Responses.OK.name());
+            }
         }
         toNotify = false;
     }
