@@ -1,3 +1,8 @@
+package app;
+
+import data.UserAccounts;
+import handlers.ClientHandler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,5 +30,9 @@ public class Main {
             var clientHandler = new ClientHandler(socket);
             clientHandler.start();
         }
+    }
+
+    public static List<Socket> getClients() {
+        return clients;
     }
 }

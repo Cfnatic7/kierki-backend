@@ -1,3 +1,5 @@
+package handlers;
+
 import data.User;
 import enums.Commands;
 import enums.Responses;
@@ -15,6 +17,8 @@ public class ClientHandler extends Thread {
 
     private DataInputStream dataIn;
 
+    private LoginHandler loginHandler;
+
     private boolean isrunning;
 
     public ClientHandler(Socket clientSocket) throws IOException {
@@ -22,6 +26,7 @@ public class ClientHandler extends Thread {
         dataOut = new DataOutputStream(clientSocket.getOutputStream());
         dataIn = new DataInputStream(clientSocket.getInputStream());
         isrunning = true;
+        loginHandler = new LoginHandler(dataOut, dataIn);
     }
 
     @Override
@@ -30,7 +35,7 @@ public class ClientHandler extends Thread {
             try {
                 String command = dataIn.readUTF();
                 if (command.equals(Commands.LOGIN.name())) {
-                    handleLogin();
+                    loginHandler.handleLogin();
                 }
                 else if (command.equals(Commands.REGISTER.name())) {
                     handleRegister();
@@ -38,24 +43,6 @@ public class ClientHandler extends Thread {
             } catch (IOException e) {
                 System.out.println("Can't receive user command");
             }
-        }
-    }
-
-    private void handleLogin() throws IOException {
-        dataOut.writeUTF(Responses.OK.name());
-        String login = dataIn.readUTF();
-        dataOut.writeUTF(Responses.OK.name());
-        String password = dataIn.readUTF();
-        int userIndex = Main.userAccounts.getUsers().indexOf(new User(login, password));
-        if (userIndex == -1) {
-            dataOut.writeUTF(Responses.USER_NOT_FOUND.name());
-        }
-        else {
-            var user = Main.userAccounts.getUsers().get(userIndex);
-            if (user.isLoggedIn()) {
-                dataOut.writeUTF(Responses.USER_LOGGED_IN.name());
-            }
-            else dataOut.writeUTF(Responses.OK.name());
         }
     }
 

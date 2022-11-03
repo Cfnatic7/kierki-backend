@@ -1,3 +1,5 @@
+package data;
+
 import data.User;
 
 import java.util.ArrayList;
