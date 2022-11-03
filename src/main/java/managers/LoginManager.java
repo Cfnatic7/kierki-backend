@@ -8,6 +8,7 @@ import enums.Responses;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 public class LoginManager {
 
@@ -20,7 +21,7 @@ public class LoginManager {
         this.dataOut = dataOut;
     }
 
-    public void handleLogin() throws IOException {
+    public Optional<User> handleLogin() throws IOException {
         dataOut.writeUTF(Responses.OK.name());
         String login = dataIn.readUTF();
         dataOut.writeUTF(Responses.OK.name());
@@ -28,13 +29,16 @@ public class LoginManager {
         int userIndex = Main.userAccounts.getUsers().indexOf(new User(login, password));
         if (userIndex == -1) {
             dataOut.writeUTF(Responses.USER_NOT_FOUND.name());
+            return Optional.empty();
         }
         else {
             var user = Main.userAccounts.getUsers().get(userIndex);
             if (user.isLoggedIn()) {
                 dataOut.writeUTF(Responses.USER_LOGGED_IN.name());
+                return Optional.empty();
             }
             else dataOut.writeUTF(Responses.OK.name());
+            return Optional.of(user);
         }
     }
 }

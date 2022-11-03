@@ -1,9 +1,11 @@
 package handlers;
 
+import data.User;
 import enums.Commands;
 import enums.Responses;
 import managers.LoginManager;
 import managers.RegisterManager;
+import managers.RoomManager;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,7 +24,11 @@ public class ClientHandler extends Thread {
 
     private final RegisterManager registerManager;
 
+    private final RoomManager roomManager;
+
     private boolean isrunning;
+
+    private volatile User loggedInUser;
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
@@ -31,6 +37,7 @@ public class ClientHandler extends Thread {
         isrunning = true;
         loginManager = new LoginManager(dataOut, dataIn);
         registerManager = new RegisterManager(dataOut, dataIn);
+        roomManager = new RoomManager(dataOut, dataIn);
     }
 
     @Override
@@ -39,7 +46,8 @@ public class ClientHandler extends Thread {
             try {
                 String command = dataIn.readUTF();
                 if (command.equals(Commands.LOGIN.name())) {
-                    loginManager.handleLogin();
+                    var user = loginManager.handleLogin();
+                    user.ifPresent(value -> loggedInUser = value);
                 }
                 else if (command.equals(Commands.REGISTER.name())) {
                     registerManager.handleRegister();
