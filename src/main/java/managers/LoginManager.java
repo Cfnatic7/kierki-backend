@@ -1,4 +1,4 @@
-package handlers;
+package managers;
 
 
 import app.Main;
@@ -9,13 +9,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class LoginHandler {
+public class LoginManager {
 
     private DataInputStream dataIn;
 
     private DataOutputStream dataOut;
 
-    public LoginHandler(DataOutputStream dataOut, DataInputStream dataIn) {
+    public LoginManager(DataOutputStream dataOut, DataInputStream dataIn) {
         this.dataIn = dataIn;
         this.dataOut = dataOut;
     }

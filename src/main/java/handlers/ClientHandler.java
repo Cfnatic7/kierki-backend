@@ -1,8 +1,9 @@
 package handlers;
 
-import data.User;
 import enums.Commands;
 import enums.Responses;
+import managers.LoginManager;
+import managers.RegisterManager;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,7 +18,9 @@ public class ClientHandler extends Thread {
 
     private DataInputStream dataIn;
 
-    private LoginHandler loginHandler;
+    private final LoginManager loginManager;
+
+    private final RegisterManager registerManager;
 
     private boolean isrunning;
 
@@ -26,7 +29,8 @@ public class ClientHandler extends Thread {
         dataOut = new DataOutputStream(clientSocket.getOutputStream());
         dataIn = new DataInputStream(clientSocket.getInputStream());
         isrunning = true;
-        loginHandler = new LoginHandler(dataOut, dataIn);
+        loginManager = new LoginManager(dataOut, dataIn);
+        registerManager = new RegisterManager(dataOut, dataIn);
     }
 
     @Override
@@ -35,33 +39,17 @@ public class ClientHandler extends Thread {
             try {
                 String command = dataIn.readUTF();
                 if (command.equals(Commands.LOGIN.name())) {
-                    loginHandler.handleLogin();
+                    loginManager.handleLogin();
                 }
                 else if (command.equals(Commands.REGISTER.name())) {
-                    handleRegister();
+                    registerManager.handleRegister();
                 }
             } catch (IOException e) {
                 System.out.println("Can't receive user command");
             }
         }
     }
-
-    private void handleRegister() throws IOException {
-        dataOut.writeUTF(Responses.OK.name());
-        String login = dataIn.readUTF();
-        dataOut.writeUTF(Responses.OK.name());
-        String password = dataIn.readUTF();
-        var filteredUsers = Main
-                .userAccounts
-                .getUsers()
-                .stream()
-                .filter(user -> user.getLogin().equals(login)).toList();
-        if (filteredUsers.size() > 0) dataOut.writeUTF(Responses.USER_ALREADY_EXISTS.name());
-        else {
-            Main.userAccounts.addUser(login, password);
-            dataOut.writeUTF(Responses.OK.name());
-        }
-    }
+    
 
     public Socket getClientSocket() {
         return clientSocket;
