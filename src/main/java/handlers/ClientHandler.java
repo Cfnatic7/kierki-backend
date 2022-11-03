@@ -30,6 +30,8 @@ public class ClientHandler extends Thread {
 
     private volatile User loggedInUser;
 
+    private RoomHandler roomHandler;
+
     public ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
         dataOut = new DataOutputStream(clientSocket.getOutputStream());
@@ -47,13 +49,24 @@ public class ClientHandler extends Thread {
                 String command = dataIn.readUTF();
                 if (command.equals(Commands.LOGIN.name())) {
                     var user = loginManager.handleLogin();
-                    user.ifPresent(value -> loggedInUser = value);
+                    if (user.isPresent()) {
+                        loggedInUser = user.get();
+                        roomHandler = new RoomHandler(clientSocket, roomManager, loggedInUser);
+                        roomHandler.start();
+                    }
                 }
                 else if (command.equals(Commands.REGISTER.name())) {
                     registerManager.handleRegister();
                 }
+                else if (command.equals(Commands.JOIN_ROOM.name())) {
+                    roomManager.handleRoomJoin(loggedInUser);
+                }
+                else if (command.equals(Commands.LEAVE_ROOM.name())) {
+                    roomManager.handleLeaveRoom(loggedInUser);
+                }
             } catch (IOException e) {
                 System.out.println("Can't receive user command");
+                roomHandler.kill();
                 kill();
             }
         }
