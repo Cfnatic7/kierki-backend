@@ -1,5 +1,7 @@
 package data;
 
+import enums.RoomNumber;
+
 import java.util.Objects;
 
 public class User {
@@ -9,6 +11,8 @@ public class User {
     private String password;
 
     private boolean isLoggedIn;
+
+    private RoomNumber roomNumber;
 
     public User(String login, String password) {
         Objects.requireNonNull(login);
@@ -46,5 +50,13 @@ public class User {
 
     public void setLoggedIn(boolean loggedIn) {
         isLoggedIn = loggedIn;
+    }
+
+    public RoomNumber getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(RoomNumber roomNumber) {
+        this.roomNumber = roomNumber;
     }
 }

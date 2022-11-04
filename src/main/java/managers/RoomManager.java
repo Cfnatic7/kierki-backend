@@ -26,7 +26,6 @@ public class RoomManager {
 
     private static boolean toNotify = false;
 
-    private User player;
 
     public synchronized void notifyAllClients() throws IOException {
 
@@ -63,6 +62,7 @@ public class RoomManager {
         if (roomNumber.equals(RoomNumber.ONE.name())) {
             try {
                 sendJoinRoomResponse(0, player);
+                player.setRoomNumber(RoomNumber.ONE);
             } catch (RoomIsFullException e) {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
@@ -70,6 +70,7 @@ public class RoomManager {
         else if (roomNumber.equals(RoomNumber.TWO.name())) {
             try {
                 sendJoinRoomResponse(1, player);
+                player.setRoomNumber(RoomNumber.TWO);
             } catch (RoomIsFullException e) {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
@@ -77,6 +78,7 @@ public class RoomManager {
         else if (roomNumber.equals(RoomNumber.THREE.name())) {
             try {
                 sendJoinRoomResponse(2, player);
+                player.setRoomNumber(RoomNumber.THREE);
             } catch (RoomIsFullException e) {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
@@ -84,6 +86,7 @@ public class RoomManager {
         else if (roomNumber.equals(RoomNumber.FOUR.name())) {
             try {
                 sendJoinRoomResponse(3, player);
+                player.setRoomNumber(RoomNumber.FOUR);
             } catch (RoomIsFullException e) {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
@@ -106,21 +109,24 @@ public class RoomManager {
             }
         }
         dataOut.writeUTF(Responses.OK.name());
-        String roomNumber = dataIn.readUTF();
-        if (roomNumber.equals(RoomNumber.ONE.name())) {
+        if (player.getRoomNumber().name().equals(RoomNumber.ONE.name())) {
             Main.rooms.get(0).removeplayer(player);
+            player.setRoomNumber(null);
         }
-        else if (roomNumber.equals(RoomNumber.TWO.name())) {
+        else if (player.getRoomNumber().name().equals(RoomNumber.TWO.name())) {
             Main.rooms.get(1).removeplayer(player);
+            player.setRoomNumber(null);
         }
-        else if (roomNumber.equals(RoomNumber.THREE.name())) {
+        else if (player.getRoomNumber().name().equals(RoomNumber.THREE.name())) {
             Main.rooms.get(2).removeplayer(player);
+            player.setRoomNumber(null);
         }
-        else if (roomNumber.equals(RoomNumber.FOUR.name())) {
+        else if (player.getRoomNumber().name().equals(RoomNumber.FOUR.name())) {
             Main.rooms.get(3).removeplayer(player);
+            player.setRoomNumber(null);
         }
-        dataOut.writeUTF(Responses.OK.name());
         toNotify = true;
         this.notifyAll();
     }
+
 }

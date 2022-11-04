@@ -16,6 +16,8 @@ public class LoginManager {
 
     private DataOutputStream dataOut;
 
+    private User loggedInUser;
+
     public LoginManager(DataOutputStream dataOut, DataInputStream dataIn) {
         this.dataIn = dataIn;
         this.dataOut = dataOut;
@@ -28,6 +30,7 @@ public class LoginManager {
         String password = dataIn.readUTF();
         int userIndex = Main.userAccounts.getUsers().indexOf(new User(login, password));
         if (userIndex == -1) {
+            System.out.println("User not found");
             dataOut.writeUTF(Responses.USER_NOT_FOUND.name());
             return Optional.empty();
         }
@@ -35,10 +38,21 @@ public class LoginManager {
             var user = Main.userAccounts.getUsers().get(userIndex);
             if (user.isLoggedIn()) {
                 dataOut.writeUTF(Responses.USER_LOGGED_IN.name());
+                System.out.println("User already logged in");
                 return Optional.empty();
             }
             else dataOut.writeUTF(Responses.OK.name());
+            System.out.println("Logging in");
+            loggedInUser = user;
+            user.setLoggedIn(true);
             return Optional.of(user);
+        }
+    }
+
+    public void handleLogout() throws IOException {
+        dataOut.writeUTF(Responses.OK.name());
+        if (loggedInUser != null) {
+            loggedInUser.setLoggedIn(false);
         }
     }
 }

@@ -64,9 +64,15 @@ public class ClientHandler extends Thread {
                 else if (command.equals(Commands.LEAVE_ROOM.name())) {
                     roomManager.handleLeaveRoom(loggedInUser);
                 }
+                else if (command.equals(Commands.LOGOUT.name())) {
+                    roomManager.handleLeaveRoom(loggedInUser);
+                    loginManager.handleLogout();
+                }
             } catch (IOException e) {
                 System.out.println("Can't receive user command");
-                roomHandler.kill();
+                if (roomHandler != null) {
+                    roomHandler.kill();
+                }
                 kill();
             }
         }
