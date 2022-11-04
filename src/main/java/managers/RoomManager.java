@@ -2,7 +2,6 @@ package managers;
 
 import app.Main;
 import data.User;
-import enums.Commands;
 import enums.Responses;
 import enums.RoomNumber;
 import exceptions.RoomIsFullException;
@@ -43,7 +42,9 @@ public class RoomManager {
             DataOutputStream dataOut = new DataOutputStream(roomSocket.getOutputStream());
             for (var room : Main.rooms) {
                 dataOut.writeUTF(room.getRoomNumber().name());
-                dataOut.writeUTF(room.isFull() ? Responses.ROOM_FULL.name() : Responses.OK.name());
+                String responseToSend = room.isFull() ? Responses.ROOM_FULL.name() : Responses.OK.name();
+                dataOut.writeUTF(responseToSend);
+                System.out.println("Notification send: " + room.getRoomNumber().name() + " " + responseToSend);
             }
         }
         toNotify = false;
@@ -93,6 +94,7 @@ public class RoomManager {
         Main.rooms.get(index).addPlayer(player);
         dataOut.writeUTF(Responses.OK.name());
         toNotify = true;
+        this.notify();
     }
 
     public synchronized void handleLeaveRoom(User player) throws IOException {
@@ -119,5 +121,6 @@ public class RoomManager {
         }
         dataOut.writeUTF(Responses.OK.name());
         toNotify = true;
+        this.notifyAll();
     }
 }
