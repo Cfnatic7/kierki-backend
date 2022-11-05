@@ -12,16 +12,12 @@ public class RoomHandler extends Thread {
 
     private RoomManager roomManager;
 
-    private User loggedInPlayer;
-
     private boolean isRunning = true;
 
-    public RoomHandler(RoomManager roomManager, User loggedInPlayer) throws IOException {
+    public RoomHandler(RoomManager roomManager) {
         isRunning = true;
 
         this.roomManager = roomManager;
-
-        this.loggedInPlayer = loggedInPlayer;
     }
 
     @Override
@@ -31,6 +27,7 @@ public class RoomHandler extends Thread {
                 this.roomManager.notifyAllClients();
             } catch (IOException e) {
                 kill();
+                e.printStackTrace();
                 System.out.println("Connection to client lost");
             }
         }

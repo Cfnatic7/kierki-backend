@@ -4,6 +4,8 @@ import data.UserAccounts;
 import enums.RoomNumber;
 import handlers.ClientHandler;
 import data.Room;
+import handlers.RoomHandler;
+import managers.RoomManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,7 +17,7 @@ public class Main {
 
     private final static List<Socket> clients = new ArrayList<>();
 
-    private final static List<Socket> roomSockets = new ArrayList<>();
+    public volatile static List<Socket> roomSockets = new ArrayList<>();
 
     private final static int PORT_FOR_CLIENT_HANDLER = 8372;
 
@@ -27,11 +29,14 @@ public class Main {
 
     public static final UserAccounts userAccounts = new UserAccounts();
 
-    public static final List<Room> rooms = new ArrayList<>();
+    public static volatile List<Room> rooms = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         serverForRoomHandler = new ServerSocket(PORT_FOR_ROOM_HANDLER);
         serverForClientHandler = new ServerSocket(PORT_FOR_CLIENT_HANDLER);
+        RoomManager roomManager = new RoomManager();
+        RoomHandler roomHandler = new RoomHandler(roomManager);
+        roomHandler.start();
         userAccounts.initializeBasicUserAccounts();
         initializeRooms();
 
@@ -41,7 +46,7 @@ public class Main {
             Socket roomSocket = serverForRoomHandler.accept();
             clients.add(clientSocket);
             roomSockets.add(roomSocket);
-            var clientHandler = new ClientHandler(clientSocket, roomSocket);
+            var clientHandler = new ClientHandler(clientSocket, roomSocket, roomManager);
             clientHandler.start();
         }
     }

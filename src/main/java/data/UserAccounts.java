@@ -17,7 +17,6 @@ public class UserAccounts {
         users.add(new User("test", "test"));
         users.add(new User("Jan", "Testowy"));
         users.add(new User("Jan", "Nowak"));
-        users.add(new User("Jan", "Nowak"));
         users.add(new User("Fryderyk", "Chopin"));
         users.add(new User("Fiodor", "Dostojewski"));
         users.add(new User("Fryderyk", "Nietzshe"));

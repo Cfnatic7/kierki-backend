@@ -30,6 +30,7 @@ public class Room {
 
     public void removeplayer(User player) {
         players.remove(player);
+        System.out.println("Number of players in room: " + roomNumber.name() + " is " + players.size());
     }
 
     public boolean isFull() {

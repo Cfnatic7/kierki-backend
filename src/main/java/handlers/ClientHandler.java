@@ -1,5 +1,6 @@
 package handlers;
 
+import app.Main;
 import data.User;
 import enums.Commands;
 import enums.Responses;
@@ -28,17 +29,18 @@ public class ClientHandler extends Thread {
 
     private final Socket roomSocket;
 
+    private final Socket clientSocket;
+
     private final DataInputStream dataIn;
 
-    public ClientHandler(Socket clientSocket, Socket roomSocket) throws IOException {
-        DataOutputStream dataOut = new DataOutputStream(clientSocket.getOutputStream());
+    public ClientHandler(Socket cS, Socket roomSocket, RoomManager rM) throws IOException {
+        DataOutputStream dataOut = new DataOutputStream(cS.getOutputStream());
+        clientSocket = cS;
         dataIn = new DataInputStream(clientSocket.getInputStream());
-        DataOutputStream roomOut = new DataOutputStream(roomSocket.getOutputStream());
-        DataInputStream roomIn = new DataInputStream(roomSocket.getInputStream());
         isrunning = true;
-        loginManager = new LoginManager(dataOut, dataIn);
+        loginManager = new LoginManager(dataOut, dataIn, roomSocket);
         registerManager = new RegisterManager(dataOut, dataIn);
-        roomManager = new RoomManager(dataOut, dataIn, roomOut, roomIn);
+        roomManager = rM;
         this.roomSocket = roomSocket;
     }
 
@@ -49,30 +51,23 @@ public class ClientHandler extends Thread {
                 String command = dataIn.readUTF();
                 if (command.equals(Commands.LOGIN.name())) {
                     var user = loginManager.handleLogin();
-                    if (user.isPresent()) {
-                        loggedInUser = user.get();
-                        roomHandler = new RoomHandler(roomManager, loggedInUser);
-                        roomHandler.start();
-                    }
+                    user.ifPresent(value -> loggedInUser = value);
                 }
                 else if (command.equals(Commands.REGISTER.name())) {
                     registerManager.handleRegister();
                 }
                 else if (command.equals(Commands.JOIN_ROOM.name())) {
-                    roomManager.handleRoomJoin(loggedInUser);
+                    roomManager.handleRoomJoin(loggedInUser, clientSocket);
                 }
                 else if (command.equals(Commands.LEAVE_ROOM.name())) {
-                    roomManager.handleLeaveRoom(loggedInUser);
+                    roomManager.handleLeaveRoom(loggedInUser, clientSocket);
                 }
                 else if (command.equals(Commands.LOGOUT.name())) {
-                    roomManager.handleLeaveRoom(loggedInUser);
-                    loginManager.handleLogout();
+                    roomManager.handleLeaveRoom(loggedInUser, clientSocket);
+                    loginManager.handleLogout(loggedInUser);
                 }
             } catch (IOException e) {
                 System.out.println("Can't receive user command");
-                if (roomHandler != null) {
-                    roomHandler.kill();
-                }
                 kill();
             }
         }
