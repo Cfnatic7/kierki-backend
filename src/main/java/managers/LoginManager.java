@@ -13,16 +13,19 @@ import java.util.Optional;
 
 public class LoginManager {
 
+    private Socket clientSocket;
+
     private DataInputStream dataIn;
 
     private DataOutputStream dataOut;
 
     private Socket roomSocket;
 
-    public LoginManager(DataOutputStream dataOut, DataInputStream dataIn, Socket roomSocket) {
-        this.dataIn = dataIn;
-        this.dataOut = dataOut;
+    public LoginManager(Socket clientSocket, Socket roomSocket) throws IOException {
+        this.dataIn = new DataInputStream(clientSocket.getInputStream());
+        this.dataOut = new DataOutputStream(clientSocket.getOutputStream());
         this.roomSocket = roomSocket;
+        this.clientSocket = clientSocket;
     }
 
     public Optional<User> handleLogin() throws IOException {
@@ -30,7 +33,7 @@ public class LoginManager {
         String login = dataIn.readUTF();
         dataOut.writeUTF(Responses.OK.name());
         String password = dataIn.readUTF();
-        int userIndex = Main.userAccounts.getUsers().indexOf(new User(login, password));
+        int userIndex = Main.userAccounts.getUsers().indexOf(new User(login, password, clientSocket));
         if (userIndex == -1) {
             System.out.println("User not found");
             dataOut.writeUTF(Responses.USER_NOT_FOUND.name());
@@ -54,6 +57,7 @@ public class LoginManager {
         dataOut.writeUTF(Responses.OK.name());
         synchronized (Main.getRoomSockets()) {
             Main.roomSockets.remove(roomSocket);
+            System.out.println("Number of room sockets: " + Main.roomSockets.size());
         }
         if (loggedInUser != null) {
             loggedInUser.setLoggedIn(false);

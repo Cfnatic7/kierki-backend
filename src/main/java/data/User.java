@@ -2,6 +2,7 @@ package data;
 
 import enums.RoomNumber;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +18,26 @@ public class User {
     private boolean isLoggedIn;
 
     private RoomNumber roomNumber;
+
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    public void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
+
+    private Socket clientSocket;
+
+    public User(String login, String password, Socket clientSocket) {
+        Objects.requireNonNull(login);
+        Objects.requireNonNull(password);
+        this.login = login;
+        this.password = password;
+        this.isLoggedIn = false;
+        cardsInHand = new ArrayList<>(Deck.HALF_THE_DECK);
+        this.clientSocket = clientSocket;
+    }
 
     public User(String login, String password) {
         Objects.requireNonNull(login);

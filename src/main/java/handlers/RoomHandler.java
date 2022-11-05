@@ -26,7 +26,6 @@ public class RoomHandler extends Thread {
             try {
                 this.roomManager.notifyAllClients();
             } catch (IOException e) {
-                kill();
                 e.printStackTrace();
                 System.out.println("Connection to client lost");
             }

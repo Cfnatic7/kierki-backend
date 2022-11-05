@@ -34,6 +34,7 @@ public class RoomManager {
         }
         synchronized (Main.getRoomSockets()) {
             for (Socket roomSocket : Main.getRoomSockets()) {
+                if (!roomSocket.isConnected()) continue;
                 DataOutputStream dataOut = new DataOutputStream(roomSocket.getOutputStream());
                 for (var room : Main.rooms) {
                     dataOut.writeUTF(room.getRoomNumber().name());
@@ -114,12 +115,12 @@ public class RoomManager {
             return;
         }
         Main.rooms.get(player.getRoomNumber().ordinal()).removeplayer(player);
-        player.setRoomNumber(null);
         Room playerRoom = Main.rooms.get(player.getRoomNumber().ordinal());
         for (Card card : player.getCardsInHand()) {
             playerRoom.getDeck().addCard(card);
         }
         player.getCardsInHand().clear();
+        player.setRoomNumber(null);
         toNotify = true;
         dataOut.writeUTF(Responses.OK.name());
         this.notifyAll();

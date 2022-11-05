@@ -1,6 +1,5 @@
 package handlers;
 
-import data.Deck;
 import data.User;
 import enums.Commands;
 import managers.DeckManager;
@@ -39,11 +38,10 @@ public class ClientHandler extends Thread {
         clientSocket = cS;
         dataIn = new DataInputStream(clientSocket.getInputStream());
         isrunning = true;
-        loginManager = new LoginManager(dataOut, dataIn, roomSocket);
+        loginManager = new LoginManager(clientSocket, roomSocket);
         registerManager = new RegisterManager(dataOut, dataIn);
         roomManager = rM;
         this.roomSocket = roomSocket;
-        var deck = new Deck();
         deckManager = new DeckManager(dataIn, dataOut);
     }
 
