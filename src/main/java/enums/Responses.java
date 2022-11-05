@@ -7,4 +7,5 @@ public enum Responses {
     USER_LOGGED_IN,
     ROOM_FULL,
     END_RECEIVE_CARDS,
+    POINTS,
 }

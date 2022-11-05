@@ -96,6 +96,10 @@ public class RoomManager {
 
     private void sendJoinRoomResponse(int index, User player, DataOutputStream dataOut) throws RoomIsFullException, IOException {
         Main.rooms.get(index).addPlayer(player);
+        if (Main.rooms.size() == 1) {
+            player.setHasTurn(true);
+            player.setFirstTurn(true);
+        }
         dataOut.writeUTF(Responses.OK.name());
         toNotify = true;
         this.notify();

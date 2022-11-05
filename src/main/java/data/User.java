@@ -27,6 +27,8 @@ public class User {
 
     private Socket clientSocket;
 
+    private boolean firstTurn;
+
     public User(String login, String password, Socket clientSocket, Socket sendEnemyCardSocket) {
         Objects.requireNonNull(login);
         Objects.requireNonNull(password);
@@ -36,6 +38,8 @@ public class User {
         cardsInHand = new ArrayList<>(Deck.HALF_THE_DECK);
         this.clientSocket = clientSocket;
         this.sendEnemyCardSocket = sendEnemyCardSocket;
+        hasTurn = false;
+        firstTurn = false;
     }
 
     public User(String login, String password, Socket clientSocket) {
@@ -46,6 +50,8 @@ public class User {
         this.isLoggedIn = false;
         cardsInHand = new ArrayList<>(Deck.HALF_THE_DECK);
         this.clientSocket = clientSocket;
+        hasTurn = false;
+        firstTurn = false;
     }
 
     public User(String login, String password) {
@@ -55,6 +61,8 @@ public class User {
         this.password = password;
         this.isLoggedIn = false;
         cardsInHand = new ArrayList<>(Deck.HALF_THE_DECK);
+        hasTurn = false;
+        firstTurn = false;
     }
 
     @Override
@@ -115,7 +123,7 @@ public class User {
         this.cardPlayed = cardPlayed;
     }
 
-    public boolean isHasTurn() {
+    public boolean hasTurn() {
         return hasTurn;
     }
 
@@ -129,5 +137,13 @@ public class User {
 
     public void setSendEnemyCardSocket(Socket sendEnemyCardSocket) {
         this.sendEnemyCardSocket = sendEnemyCardSocket;
+    }
+
+    public boolean isFirstTurn() {
+        return firstTurn;
+    }
+
+    public void setFirstTurn(boolean firstTurn) {
+        this.firstTurn = firstTurn;
     }
 }
