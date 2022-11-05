@@ -2,10 +2,8 @@ package handlers;
 
 import data.User;
 import enums.Commands;
-import managers.DeckManager;
-import managers.LoginManager;
-import managers.RegisterManager;
-import managers.RoomManager;
+import managers.*;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -35,6 +33,8 @@ public class ClientHandler extends Thread {
 
     private final DeckManager deckManager;
 
+    private final CardManager cardManager;
+
     public ClientHandler(Socket cS, Socket roomSocket, Socket sendEnemyCardSocket, RoomManager rM) throws IOException {
         DataOutputStream dataOut = new DataOutputStream(cS.getOutputStream());
         clientSocket = cS;
@@ -46,6 +46,7 @@ public class ClientHandler extends Thread {
         this.roomSocket = roomSocket;
         deckManager = new DeckManager(dataIn, dataOut);
         this.sendEnemyCardSocket = sendEnemyCardSocket;
+        this.cardManager = new CardManager(clientSocket, roomSocket);
     }
 
     @Override
@@ -76,6 +77,9 @@ public class ClientHandler extends Thread {
                 }
                 else if (command.equals(Commands.GET_HAND.name())) {
                     deckManager.handleGetHand(loggedInUser);
+                }
+                else if (command.equals(Commands.PLAY_CARD.name())) {
+                    cardManager.handlePlayCard(loggedInUser);
                 }
             } catch (IOException e) {
                 System.out.println("Can't receive user command");

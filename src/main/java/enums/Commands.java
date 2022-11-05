@@ -8,5 +8,5 @@ public enum Commands {
     LEAVE_ROOM,
     GET_HAND,
     PLAY_CARD,
-    GET_ENEMY_CARD,
+    SEND_ENEMY_CARD,
 }
