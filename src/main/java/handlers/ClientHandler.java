@@ -1,15 +1,12 @@
 package handlers;
 
-import app.Main;
 import data.Deck;
 import data.User;
 import enums.Commands;
-import enums.Responses;
 import managers.DeckManager;
 import managers.LoginManager;
 import managers.RegisterManager;
 import managers.RoomManager;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -47,7 +44,7 @@ public class ClientHandler extends Thread {
         roomManager = rM;
         this.roomSocket = roomSocket;
         var deck = new Deck();
-        deckManager = new DeckManager(deck, dataIn, dataOut);
+        deckManager = new DeckManager(dataIn, dataOut);
     }
 
     @Override
@@ -73,7 +70,7 @@ public class ClientHandler extends Thread {
                     loginManager.handleLogout(loggedInUser);
                 }
                 else if (command.equals(Commands.GET_HAND.name())) {
-                    deckManager.handleGetHand();
+                    deckManager.handleGetHand(loggedInUser);
                 }
             } catch (IOException e) {
                 System.out.println("Can't receive user command");

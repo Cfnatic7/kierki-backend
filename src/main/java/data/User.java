@@ -2,11 +2,15 @@ package data;
 
 import enums.RoomNumber;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class User {
 
     private String login;
+
+    private final List<Card> cardsInHand;
 
     private String password;
 
@@ -20,6 +24,7 @@ public class User {
         this.login = login;
         this.password = password;
         this.isLoggedIn = false;
+        cardsInHand = new ArrayList<>(Deck.HALF_THE_DECK);
     }
 
     @Override
@@ -58,5 +63,9 @@ public class User {
 
     public void setRoomNumber(RoomNumber roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public List<Card> getCardsInHand() {
+        return cardsInHand;
     }
 }

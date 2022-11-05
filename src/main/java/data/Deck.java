@@ -12,7 +12,6 @@ public class Deck {
 
     public static final int HALF_THE_DECK = 26;
 
-
     private final List<Card> cards = new ArrayList<>(52);
 
     public Deck() {
@@ -26,6 +25,14 @@ public class Deck {
             }
         }
         Collections.shuffle(cards);
+    }
+
+    public void shuffleDeck() {
+        Collections.shuffle(cards);
+    }
+
+    public void addCard(Card card) {
+        cards.add(card);
     }
 
     public Card getCard() throws EmptyDeckException {

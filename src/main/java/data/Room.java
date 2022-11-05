@@ -12,9 +12,12 @@ public class Room {
 
     private final RoomNumber roomNumber;
 
+    private final Deck deck;
+
     public Room(RoomNumber roomNumber) {
         this.roomNumber = roomNumber;
         players = new ArrayList<>();
+        deck = new Deck();
     }
 
     public RoomNumber getRoomNumber() {
@@ -35,6 +38,10 @@ public class Room {
 
     public boolean isFull() {
         return this.players.size() == 2;
+    }
+
+    public Deck getDeck() {
+        return deck;
     }
 
 }

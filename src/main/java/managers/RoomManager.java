@@ -1,6 +1,8 @@
 package managers;
 
 import app.Main;
+import data.Card;
+import data.Room;
 import data.User;
 import enums.Responses;
 import enums.RoomNumber;
@@ -113,6 +115,11 @@ public class RoomManager {
         }
         Main.rooms.get(player.getRoomNumber().ordinal()).removeplayer(player);
         player.setRoomNumber(null);
+        Room playerRoom = Main.rooms.get(player.getRoomNumber().ordinal());
+        for (Card card : player.getCardsInHand()) {
+            playerRoom.getDeck().addCard(card);
+        }
+        player.getCardsInHand().clear();
         toNotify = true;
         dataOut.writeUTF(Responses.OK.name());
         this.notifyAll();
