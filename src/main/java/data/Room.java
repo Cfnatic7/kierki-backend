@@ -44,4 +44,8 @@ public class Room {
         return deck;
     }
 
+    public List<User> getPlayers() {
+        return players;
+    }
+
 }

@@ -1,12 +1,7 @@
 package handlers;
 
-import data.User;
 import managers.RoomManager;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 public class RoomHandler extends Thread {
 

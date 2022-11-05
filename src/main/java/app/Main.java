@@ -23,9 +23,13 @@ public class Main {
 
     private final static int PORT_FOR_ROOM_HANDLER = 7482;
 
+    private final static int PORT_FOR_ENEMY_CARD = 7583;
+
     private static ServerSocket serverForClientHandler;
 
     private static ServerSocket serverForRoomHandler;
+
+    private static ServerSocket serverForEnemyCard;
 
     public static final UserAccounts userAccounts = new UserAccounts();
 
@@ -34,6 +38,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         serverForRoomHandler = new ServerSocket(PORT_FOR_ROOM_HANDLER);
         serverForClientHandler = new ServerSocket(PORT_FOR_CLIENT_HANDLER);
+        serverForEnemyCard = new ServerSocket(PORT_FOR_ENEMY_CARD);
         RoomManager roomManager = new RoomManager();
         RoomHandler roomHandler = new RoomHandler(roomManager);
         roomHandler.start();
@@ -44,9 +49,10 @@ public class Main {
         while(true) {
             Socket clientSocket = serverForClientHandler.accept();
             Socket roomSocket = serverForRoomHandler.accept();
+            Socket sendEnemyCardSocket = serverForEnemyCard.accept();
             clients.add(clientSocket);
             roomSockets.add(roomSocket);
-            var clientHandler = new ClientHandler(clientSocket, roomSocket, roomManager);
+            var clientHandler = new ClientHandler(clientSocket, roomSocket, sendEnemyCardSocket, roomManager);
             clientHandler.start();
         }
     }

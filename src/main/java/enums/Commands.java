@@ -6,5 +6,7 @@ public enum Commands {
     REGISTER,
     JOIN_ROOM,
     LEAVE_ROOM,
-    GET_HAND
+    GET_HAND,
+    PLAY_CARD,
+    GET_ENEMY_CARD,
 }

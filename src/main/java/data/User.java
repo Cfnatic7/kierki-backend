@@ -17,17 +17,26 @@ public class User {
 
     private boolean isLoggedIn;
 
+    private Card cardPlayed;
+
+    private boolean hasTurn;
+
+    private Socket sendEnemyCardSocket;
+
     private RoomNumber roomNumber;
 
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
-
-    public void setClientSocket(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-    }
-
     private Socket clientSocket;
+
+    public User(String login, String password, Socket clientSocket, Socket sendEnemyCardSocket) {
+        Objects.requireNonNull(login);
+        Objects.requireNonNull(password);
+        this.login = login;
+        this.password = password;
+        this.isLoggedIn = false;
+        cardsInHand = new ArrayList<>(Deck.HALF_THE_DECK);
+        this.clientSocket = clientSocket;
+        this.sendEnemyCardSocket = sendEnemyCardSocket;
+    }
 
     public User(String login, String password, Socket clientSocket) {
         Objects.requireNonNull(login);
@@ -88,5 +97,37 @@ public class User {
 
     public List<Card> getCardsInHand() {
         return cardsInHand;
+    }
+
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    public void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
+
+    public Card getCardPlayed() {
+        return cardPlayed;
+    }
+
+    public void setCardPlayed(Card cardPlayed) {
+        this.cardPlayed = cardPlayed;
+    }
+
+    public boolean isHasTurn() {
+        return hasTurn;
+    }
+
+    public void setHasTurn(boolean hasTurn) {
+        this.hasTurn = hasTurn;
+    }
+
+    public Socket getSendEnemyCardSocket() {
+        return sendEnemyCardSocket;
+    }
+
+    public void setSendEnemyCardSocket(Socket sendEnemyCardSocket) {
+        this.sendEnemyCardSocket = sendEnemyCardSocket;
     }
 }
