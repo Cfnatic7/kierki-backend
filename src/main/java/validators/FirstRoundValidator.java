@@ -43,7 +43,11 @@ public class FirstRoundValidator {
                 .getPlayers()
                 .get(Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0);
 
-        if (loggedInUser.getCardPlayed() == null || enemy.getCardPlayed() == null) return;
+        if (loggedInUser.getCardPlayed() == null && enemy.getCardPlayed() == null) return;
+        else if (enemy.getCardPlayed() == null) {
+            loggedInUser.setHasTurn(false);
+            enemy.setHasTurn(true);
+        }
         if (loggedInUser.isFirstTurn()) {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
                 writePoints(loggedInUser, POINTS, 0);
