@@ -15,24 +15,39 @@ public class FirstRoundValidator {
 //    }
 
     public static boolean isMoveCorrect(User loggedInUser) {
+        int enemyIndex = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
+        var enemy = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().get(enemyIndex);
         if (!loggedInUser.hasTurn()) return false;
         if (loggedInUser.isFirstTurn()) {
+            setTurns(enemy, true, loggedInUser, false);
             return true;
         } else {
             var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
             int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
             var enemyPlayer = room.getPlayers().get(indexOfEnemy);
-            if (enemyPlayer.getCardPlayed() == null) return true;
+            if (enemyPlayer.getCardPlayed() == null) {
+                setTurns(enemy, true, loggedInUser, false);
+            }
             var filteredCards = enemyPlayer
                     .getCardsInHand()
                     .stream()
                     .filter((card) -> card.getSuit() == enemyPlayer.getCardPlayed().getSuit()).toList();
             if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() != enemyPlayer.getCardPlayed().getSuit())
                 return false;
-            else if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() == enemyPlayer.getCardPlayed().getSuit())
+            else if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() == enemyPlayer.getCardPlayed().getSuit()) {
+                setTurns(enemy, true, loggedInUser, false);
                 return true;
-            else return true;
+            }
+            else {
+                setTurns(enemy, true, loggedInUser, false);
+                return true;
+            }
         }
+    }
+
+    private static void setTurns(User enemy, boolean hasTurn, User loggedInUser, boolean hasTurn1) {
+        enemy.setHasTurn(hasTurn);
+        loggedInUser.setHasTurn(hasTurn1);
     }
 
     public static void evaluateMove(User loggedInUser) throws IOException {
@@ -43,12 +58,7 @@ public class FirstRoundValidator {
                 .getPlayers()
                 .get(Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0);
 
-        if (loggedInUser.getCardPlayed() == null && enemy.getCardPlayed() == null) return;
-        else if (enemy.getCardPlayed() == null) {
-            loggedInUser.setHasTurn(false);
-            enemy.setHasTurn(true);
-            return;
-        }
+        if (loggedInUser.getCardPlayed() == null || enemy.getCardPlayed() == null) return;
         if (loggedInUser.isFirstTurn()) {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
                 writePoints(loggedInUser, POINTS, 0);
@@ -68,7 +78,7 @@ public class FirstRoundValidator {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
                 writePoints(loggedInUser, 0, POINTS);
                 writePoints(enemy, POINTS, 0);
-                setTurns(loggedInUser, enemy, true, false);
+                setTurns(loggedInUser, enemy, false, true);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
                 writePoints(loggedInUser, POINTS, 0);
                 writePoints(enemy, 0, POINTS);
