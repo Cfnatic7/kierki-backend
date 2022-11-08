@@ -82,6 +82,8 @@ public class FirstRoundValidator {
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
         room.getDeck().getCards().add(loggedInUser.getCardPlayed());
         room.getDeck().getCards().add(enemy.getCardPlayed());
+        loggedInUser.getCardsInHand().remove(loggedInUser.getCardPlayed());
+        enemy.getCardsInHand().remove(enemy.getCardPlayed());
         loggedInUser.setCardPlayed(null);
         enemy.setCardPlayed(null);
     }
