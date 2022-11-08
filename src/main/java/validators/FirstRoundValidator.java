@@ -2,10 +2,7 @@ package validators;
 
 import app.Main;
 import data.User;
-import enums.Commands;
 import enums.Responses;
-
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -48,13 +45,31 @@ public class FirstRoundValidator {
         if (loggedInUser.getCardPlayed() == null || enemy.getCardPlayed() == null) return;
         if (loggedInUser.isFirstTurn()) {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
-                writePoints(loggedInUser);
+                writePoints(loggedInUser, POINTS, 0);
+                writePoints(enemy, 0, POINTS);
                 setTurns(loggedInUser, enemy, true, false);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
-                writePoints(loggedInUser);
+                writePoints(loggedInUser, POINTS, 0);
+                writePoints(enemy, 0, POINTS);
                 setTurns(loggedInUser, enemy, true, false);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() < enemy.getCardPlayed().getRank().ordinal()) {
-                writePoints(enemy);
+                writePoints(loggedInUser, 0, POINTS);
+                writePoints(enemy, POINTS, 0);
+                setTurns(loggedInUser, enemy, false, true);
+            }
+        }
+        else {
+            if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
+                writePoints(loggedInUser, 0, POINTS);
+                writePoints(enemy, POINTS, 0);
+                setTurns(loggedInUser, enemy, true, false);
+            } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
+                writePoints(loggedInUser, POINTS, 0);
+                writePoints(enemy, 0, POINTS);
+                setTurns(loggedInUser, enemy, true, false);
+            } else if (loggedInUser.getCardPlayed().getRank().ordinal() < enemy.getCardPlayed().getRank().ordinal()) {
+                writePoints(loggedInUser, 0, POINTS);
+                writePoints(enemy, POINTS, 0);
                 setTurns(loggedInUser, enemy, false, true);
             }
         }
@@ -65,10 +80,12 @@ public class FirstRoundValidator {
         enemy.setCardPlayed(null);
     }
 
-    private static void writePoints(User user) throws IOException {
+    private static void writePoints(User user, int userPoints, int enemyPoints) throws IOException {
         DataOutputStream dataOut = new DataOutputStream(user.getSendEnemyCardSocket().getOutputStream());
         dataOut.writeUTF(Responses.POINTS.name());
-        dataOut.writeUTF(String.valueOf(POINTS));
+        dataOut.writeUTF(String.valueOf(userPoints));
+        dataOut.writeUTF(Responses.ENEMY_POINTS.name());
+        dataOut.writeUTF(String.valueOf(enemyPoints));
     }
 
     private static void setTurns(User loggedInUser, User enemy, boolean ourTurn, boolean enemyTurn) {

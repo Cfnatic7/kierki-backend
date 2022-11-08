@@ -8,4 +8,6 @@ public enum Responses {
     ROOM_FULL,
     END_RECEIVE_CARDS,
     POINTS,
+    ENEMY_POINTS,
+    SEND_ENEMY_CARD,
 }

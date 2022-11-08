@@ -45,7 +45,7 @@ public class CardManager {
                 .get(indexOfEnemy)
                 .getSendEnemyCardSocket()
                 .getOutputStream());
-        sendEnemyCardDataOut.writeUTF(Commands.SEND_ENEMY_CARD.name());
+        sendEnemyCardDataOut.writeUTF(Responses.SEND_ENEMY_CARD.name());
         sendEnemyCardDataOut.writeUTF(suit.name());
         sendEnemyCardDataOut.writeUTF(rank.name());
         FirstRoundValidator.evaluateMove(loggedInUser);
