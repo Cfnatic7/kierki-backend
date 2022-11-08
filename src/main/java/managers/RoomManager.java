@@ -63,8 +63,8 @@ public class RoomManager {
         var dataIn = new DataInputStream(clientSocket.getInputStream());
         var dataOut = new DataOutputStream(clientSocket.getOutputStream());
         dataOut.writeUTF(Responses.OK.name());
-        String roomNumber = dataIn.readUTF();
-        if (roomNumber.equals(RoomNumber.ONE.name())) {
+        RoomNumber roomNumber = RoomNumber.valueOf(dataIn.readUTF());
+        if (roomNumber == RoomNumber.ONE) {
             try {
                 sendJoinRoomResponse(0, player, dataOut);
                 player.setRoomNumber(RoomNumber.ONE);
@@ -72,7 +72,7 @@ public class RoomManager {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
         }
-        else if (roomNumber.equals(RoomNumber.TWO.name())) {
+        else if (roomNumber == RoomNumber.TWO) {
             try {
                 sendJoinRoomResponse(1, player, dataOut);
                 player.setRoomNumber(RoomNumber.TWO);
@@ -80,7 +80,7 @@ public class RoomManager {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
         }
-        else if (roomNumber.equals(RoomNumber.THREE.name())) {
+        else if (roomNumber == RoomNumber.THREE) {
             try {
                 sendJoinRoomResponse(2, player, dataOut);
                 player.setRoomNumber(RoomNumber.THREE);
@@ -88,13 +88,17 @@ public class RoomManager {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
         }
-        else if (roomNumber.equals(RoomNumber.FOUR.name())) {
+        else if (roomNumber == RoomNumber.FOUR) {
             try {
                 sendJoinRoomResponse(3, player, dataOut);
                 player.setRoomNumber(RoomNumber.FOUR);
             } catch (RoomIsFullException e) {
                 dataOut.writeUTF(Responses.ROOM_FULL.name());
             }
+        }
+        if (Main.rooms.get(roomNumber.ordinal()).getPlayers().size() == 1) {
+            player.setHasTurn(true);
+            player.setFirstTurn(true);
         }
     }
 

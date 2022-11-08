@@ -33,6 +33,9 @@ public class CardManager {
     }
 
     public void handlePlayCard(User loggedInUser) throws IOException {
+        System.out.println("Handling card played");
+        System.out.println("Rank: " + loggedInUser.getCardPlayed().getRank().name());
+        System.out.println("Suit: " + loggedInUser.getCardPlayed().getSuit().name());
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
         int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
         var sendEnemyCardDataOut = new DataOutputStream(room.getPlayers()
