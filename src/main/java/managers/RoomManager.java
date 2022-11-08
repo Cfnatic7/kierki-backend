@@ -6,6 +6,7 @@ import data.Room;
 import data.User;
 import enums.Responses;
 import enums.RoomNumber;
+import exceptions.BadSocketException;
 import exceptions.RoomIsFullException;
 
 import java.io.DataInputStream;
@@ -15,15 +16,13 @@ import java.net.Socket;
 
 public class RoomManager {
 
-
-
     public RoomManager() {
     }
 
     private static boolean toNotify = false;
 
 
-    public synchronized void notifyAllClients() throws IOException {
+    public synchronized void notifyAllClients() throws IOException, BadSocketException {
 
         while (!toNotify) {
             try {
@@ -34,14 +33,19 @@ public class RoomManager {
         }
         synchronized (Main.getRoomSockets()) {
             for (Socket roomSocket : Main.getRoomSockets()) {
-                if (!roomSocket.isConnected()) continue;
-                DataOutputStream dataOut = new DataOutputStream(roomSocket.getOutputStream());
-                for (var room : Main.rooms) {
-                    dataOut.writeUTF(room.getRoomNumber().name());
-                    String responseToSend = room.isFull() ? Responses.ROOM_FULL.name() : Responses.OK.name();
-                    dataOut.writeUTF(responseToSend);
-                    System.out.println("Notification send: " + room.getRoomNumber().name() + " " + responseToSend);
+                try {
+                    if (!roomSocket.isConnected()) continue;
+                    DataOutputStream dataOut = new DataOutputStream(roomSocket.getOutputStream());
+                    for (var room : Main.rooms) {
+                        dataOut.writeUTF(room.getRoomNumber().name());
+                        String responseToSend = room.isFull() ? Responses.ROOM_FULL.name() : Responses.OK.name();
+                        dataOut.writeUTF(responseToSend);
+                        System.out.println("Notification send: " + room.getRoomNumber().name() + " " + responseToSend);
+                    }
+                } catch (IOException e) {
+                    throw new BadSocketException(roomSocket);
                 }
+
             }
             toNotify = false;
         }

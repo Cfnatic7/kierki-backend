@@ -1,5 +1,7 @@
 package handlers;
 
+import app.Main;
+import exceptions.BadSocketException;
 import managers.RoomManager;
 import java.io.IOException;
 
@@ -22,6 +24,9 @@ public class RoomHandler extends Thread {
                 this.roomManager.notifyAllClients();
             } catch (IOException e) {
                 System.out.println("Connection to client lost");
+            } catch (BadSocketException e) {
+                Main.roomSockets.remove(e.getBadSocket());
+                System.out.println("Removed bad socket");
             }
         }
     }
