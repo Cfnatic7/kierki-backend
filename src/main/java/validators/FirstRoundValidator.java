@@ -32,17 +32,20 @@ public class FirstRoundValidator {
                 loggedInUser.setCardPlayed(null);
                 return false;
             }
-            var filteredCards = enemyPlayer
+            if (loggedInUser.getCardPlayed().getSuit() == enemyPlayer.getCardPlayed().getSuit()) {
+                setTurns(enemy, true, loggedInUser, false);
+                return true;
+            }
+            var filteredCards = loggedInUser
                     .getCardsInHand()
                     .stream()
                     .filter((card) -> card.getSuit() == enemyPlayer.getCardPlayed().getSuit()).toList();
             if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() != enemyPlayer.getCardPlayed().getSuit()) {
                 loggedInUser.setCardPlayed(null);
+                System.out.println("Number of cards of the same color in possesion: " + filteredCards.size());
+                System.out.println(filteredCards.get(0).getSuit());
+                System.out.println(filteredCards.get(0).getRank());
                 return false;
-            }
-            else if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() == enemyPlayer.getCardPlayed().getSuit()) {
-                setTurns(enemy, true, loggedInUser, false);
-                return true;
             }
             else {
                 setTurns(enemy, true, loggedInUser, false);
