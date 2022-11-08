@@ -32,31 +32,45 @@ public class CardManager {
         this.clientDataOut = new DataOutputStream(clientSocket.getOutputStream());
     }
 
+    public void setUserCard(User player) throws IOException {
+        Suit suit = Suit.valueOf(clientDataIn.readUTF());
+        Rank rank = Rank.valueOf(clientDataIn.readUTF());
+        Card card = new Card(rank, suit);
+        player.setCardPlayed(card);
+    }
+
     public void handlePlayCard(User loggedInUser) throws IOException {
         System.out.println("Handling card played");
         System.out.println("Rank: " + loggedInUser.getCardPlayed().getRank().name());
         System.out.println("Suit: " + loggedInUser.getCardPlayed().getSuit().name());
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
         int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
+        int ourIndex = indexOfEnemy == 0 ? 1 : 0;
         var sendEnemyCardDataOut = new DataOutputStream(room.getPlayers()
                 .get(indexOfEnemy)
                 .getSendEnemyCardSocket()
                 .getOutputStream());
-        Suit suit = Suit.valueOf(clientDataIn.readUTF());
-        Rank rank = Rank.valueOf(clientDataIn.readUTF());
-        Card card = new Card(rank, suit);
-        loggedInUser.setCardPlayed(card);
+        var sendOurCardDataOut = new DataOutputStream(room
+                .getPlayers()
+                .get(ourIndex)
+                .getSendEnemyCardSocket()
+                .getOutputStream());
         if (!FirstRoundValidator.isMoveCorrect(loggedInUser)) {
+            System.out.println("Move incorrect");
             return;
         }
-        sendEnemyCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
-        sendEnemyCardDataOut.writeUTF(Responses.SEND_ENEMY_CARD.name());
-        sendEnemyCardDataOut.writeUTF(suit.name());
-        sendEnemyCardDataOut.writeUTF(rank.name());
+        sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
+        sendCardToEnemy(loggedInUser, sendEnemyCardDataOut);
         FirstRoundValidator.evaluateMove(loggedInUser);
 //        loggedInUser.setHasTurn(false);
 //        room.getPlayers().get(indexOfEnemy).setHasTurn(true);
         System.out.println("Card sent to enemy");
         System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
+    }
+
+    private void sendCardToEnemy(User loggedInUser, DataOutputStream sendEnemyCardDataOut) throws IOException {
+        sendEnemyCardDataOut.writeUTF(Responses.SEND_ENEMY_CARD.name());
+        sendEnemyCardDataOut.writeUTF(loggedInUser.getCardPlayed().getSuit().name());
+        sendEnemyCardDataOut.writeUTF(loggedInUser.getCardPlayed().getRank().name());
     }
 }

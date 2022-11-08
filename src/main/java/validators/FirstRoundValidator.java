@@ -36,6 +36,7 @@ public class FirstRoundValidator {
     }
 
     public static void evaluateMove(User loggedInUser) throws IOException {
+        System.out.println("Evaluating move");
         var enemy = Main
                 .rooms
                 .get(loggedInUser.getRoomNumber().ordinal())

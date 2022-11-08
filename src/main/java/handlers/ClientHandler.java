@@ -2,6 +2,8 @@ package handlers;
 
 import data.User;
 import enums.Commands;
+import enums.Rank;
+import enums.Suit;
 import managers.*;
 
 import java.io.DataInputStream;
@@ -79,6 +81,7 @@ public class ClientHandler extends Thread {
                     deckManager.handleGetHand(loggedInUser);
                 }
                 else if (command.equals(Commands.PLAY_CARD.name())) {
+                    cardManager.setUserCard(loggedInUser);
                     cardManager.handlePlayCard(loggedInUser);
                 }
             } catch (IOException e) {
