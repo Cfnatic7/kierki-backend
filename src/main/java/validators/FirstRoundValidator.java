@@ -17,7 +17,10 @@ public class FirstRoundValidator {
     public static boolean isMoveCorrect(User loggedInUser) {
         int enemyIndex = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
         var enemy = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().get(enemyIndex);
-        if (!loggedInUser.hasTurn()) return false;
+        if (!loggedInUser.hasTurn()) {
+            loggedInUser.setCardPlayed(null);
+            return false;
+        }
         if (loggedInUser.isFirstTurn()) {
             setTurns(enemy, true, loggedInUser, false);
             return true;
@@ -26,14 +29,17 @@ public class FirstRoundValidator {
             int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
             var enemyPlayer = room.getPlayers().get(indexOfEnemy);
             if (enemyPlayer.getCardPlayed() == null) {
-                setTurns(enemy, true, loggedInUser, false);
+                loggedInUser.setCardPlayed(null);
+                return false;
             }
             var filteredCards = enemyPlayer
                     .getCardsInHand()
                     .stream()
                     .filter((card) -> card.getSuit() == enemyPlayer.getCardPlayed().getSuit()).toList();
-            if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() != enemyPlayer.getCardPlayed().getSuit())
+            if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() != enemyPlayer.getCardPlayed().getSuit()) {
+                loggedInUser.setCardPlayed(null);
                 return false;
+            }
             else if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() == enemyPlayer.getCardPlayed().getSuit()) {
                 setTurns(enemy, true, loggedInUser, false);
                 return true;
