@@ -33,18 +33,20 @@ public class CardManager {
     }
 
     public void handlePlayCard(User loggedInUser) throws IOException {
-        clientDataOut.writeUTF(Responses.OK.name());
-        Suit suit = Suit.valueOf(clientDataIn.readUTF());
-        Rank rank = Rank.valueOf(clientDataIn.readUTF());
-        Card card = new Card(rank, suit);
-        loggedInUser.setCardPlayed(card);
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
         int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
-        if (!FirstRoundValidator.isMoveCorrect(loggedInUser)) return;
         var sendEnemyCardDataOut = new DataOutputStream(room.getPlayers()
                 .get(indexOfEnemy)
                 .getSendEnemyCardSocket()
                 .getOutputStream());
+        Suit suit = Suit.valueOf(clientDataIn.readUTF());
+        Rank rank = Rank.valueOf(clientDataIn.readUTF());
+        Card card = new Card(rank, suit);
+        loggedInUser.setCardPlayed(card);
+        if (!FirstRoundValidator.isMoveCorrect(loggedInUser)) {
+            return;
+        }
+        sendEnemyCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
         sendEnemyCardDataOut.writeUTF(Responses.SEND_ENEMY_CARD.name());
         sendEnemyCardDataOut.writeUTF(suit.name());
         sendEnemyCardDataOut.writeUTF(rank.name());
