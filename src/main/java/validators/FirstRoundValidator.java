@@ -47,6 +47,7 @@ public class FirstRoundValidator {
         else if (enemy.getCardPlayed() == null) {
             loggedInUser.setHasTurn(false);
             enemy.setHasTurn(true);
+            return;
         }
         if (loggedInUser.isFirstTurn()) {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
