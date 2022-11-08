@@ -42,4 +42,8 @@ public class Deck {
         return card;
     }
 
+    public List<Card> getCards() {
+        return this.cards;
+    }
+
 }

@@ -48,9 +48,10 @@ public class CardManager {
         sendEnemyCardDataOut.writeUTF(Commands.SEND_ENEMY_CARD.name());
         sendEnemyCardDataOut.writeUTF(suit.name());
         sendEnemyCardDataOut.writeUTF(rank.name());
-        clientDataOut.writeUTF(Responses.OK.name());
+        FirstRoundValidator.evaluateMove(loggedInUser);
 //        loggedInUser.setHasTurn(false);
 //        room.getPlayers().get(indexOfEnemy).setHasTurn(true);
         System.out.println("Card sent to enemy");
+        System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
     }
 }

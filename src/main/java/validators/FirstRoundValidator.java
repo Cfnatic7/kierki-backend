@@ -59,6 +59,9 @@ public class FirstRoundValidator {
                 setTurns(loggedInUser, enemy, false, true);
             }
         }
+        var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
+        room.getDeck().getCards().add(loggedInUser.getCardPlayed());
+        room.getDeck().getCards().add(enemy.getCardPlayed());
         loggedInUser.setCardPlayed(null);
         enemy.setCardPlayed(null);
      }
