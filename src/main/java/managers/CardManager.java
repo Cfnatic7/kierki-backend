@@ -5,6 +5,7 @@ import data.Card;
 import data.User;
 import enums.*;
 import validators.FirstRoundValidator;
+import validators.SecondRoundValidator;
 import validators.Validator;
 
 import java.io.DataInputStream;
@@ -15,7 +16,8 @@ import java.util.List;
 
 public class CardManager {
 
-    private final List<Validator> validators = List.of(new FirstRoundValidator());
+    private final List<Validator> validators = List.of(new FirstRoundValidator(),
+            new SecondRoundValidator());
 
     private Socket clientSocket;
 
