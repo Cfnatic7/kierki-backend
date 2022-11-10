@@ -8,5 +8,5 @@ public interface Validator {
 
     boolean isMoveCorrect(User loggedInUser);
 
-    void evaluateMove(User loggedInUser) throws IOException
+    void evaluateMove(User loggedInUser) throws IOException;
 }
