@@ -1,6 +1,7 @@
 package data;
 
 import enums.RoomNumber;
+import enums.RoundNumber;
 import exceptions.RoomIsFullException;
 
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ public class Room {
     private final List<User> players;
 
     private final RoomNumber roomNumber;
+
+    private RoundNumber roundNumber;
 
     private final Deck deck;
 
@@ -46,6 +49,14 @@ public class Room {
 
     public List<User> getPlayers() {
         return players;
+    }
+
+    public RoundNumber getRoundNumber() {
+        return roundNumber;
+    }
+
+    public void setRoundNumber(RoundNumber roundNumber) {
+        this.roundNumber = roundNumber;
     }
 
 }

@@ -6,15 +6,15 @@ import enums.Responses;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class FirstRoundValidator {
+public class FirstRoundValidator implements Validator {
 
-    public final static int POINTS = -20;
+    public final int POINTS = -20;
 
-//    public FirstRoundValidator() {
-//
-//    }
+    public FirstRoundValidator() {
 
-    public static boolean isMoveCorrect(User loggedInUser) {
+    }
+
+    public boolean isMoveCorrect(User loggedInUser) {
         int enemyIndex = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
         var enemy = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().get(enemyIndex);
         if (!loggedInUser.hasTurn()) {
@@ -54,12 +54,12 @@ public class FirstRoundValidator {
         }
     }
 
-    private static void setTurns(User enemy, boolean hasTurn, User loggedInUser, boolean hasTurn1) {
+    private void setTurns(User enemy, boolean hasTurn, User loggedInUser, boolean hasTurn1) {
         enemy.setHasTurn(hasTurn);
         loggedInUser.setHasTurn(hasTurn1);
     }
 
-    public static void evaluateMove(User loggedInUser) throws IOException {
+    public void evaluateMove(User loggedInUser) throws IOException {
         System.out.println("Evaluating move");
         var enemy = Main
                 .rooms

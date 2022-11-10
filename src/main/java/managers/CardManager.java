@@ -8,13 +8,17 @@ import enums.Rank;
 import enums.Responses;
 import enums.Suit;
 import validators.FirstRoundValidator;
+import validators.Validator;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 public class CardManager {
+
+    private final List<Validator> validators = List.of(new FirstRoundValidator());
 
     private Socket clientSocket;
 
@@ -55,13 +59,13 @@ public class CardManager {
                 .get(ourIndex)
                 .getSendEnemyCardSocket()
                 .getOutputStream());
-        if (!FirstRoundValidator.isMoveCorrect(loggedInUser)) {
+        if (!validators.get(room.getRoundNumber().ordinal()).isMoveCorrect(loggedInUser)) {
             System.out.println("Move incorrect");
             return;
         }
         sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
         sendCardToEnemy(loggedInUser, sendEnemyCardDataOut);
-        FirstRoundValidator.evaluateMove(loggedInUser);
+        validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
 //        loggedInUser.setHasTurn(false);
 //        room.getPlayers().get(indexOfEnemy).setHasTurn(true);
         System.out.println("Card sent to enemy");
