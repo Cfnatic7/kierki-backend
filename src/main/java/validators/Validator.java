@@ -4,9 +4,9 @@ import data.User;
 
 import java.io.IOException;
 
-public interface Validator {
+public abstract class Validator {
 
-    boolean isMoveCorrect(User loggedInUser);
+    public abstract boolean isMoveCorrect(User loggedInUser);
 
-    void evaluateMove(User loggedInUser) throws IOException;
+    public abstract void evaluateMove(User loggedInUser) throws IOException;
 }

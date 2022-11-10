@@ -6,7 +6,7 @@ import enums.Responses;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class FirstRoundValidator implements Validator {
+public class FirstRoundValidator extends Validator {
 
     public final int POINTS = -20;
 
@@ -14,6 +14,7 @@ public class FirstRoundValidator implements Validator {
 
     }
 
+    @Override
     public boolean isMoveCorrect(User loggedInUser) {
         int enemyIndex = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
         var enemy = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().get(enemyIndex);
@@ -59,6 +60,7 @@ public class FirstRoundValidator implements Validator {
         loggedInUser.setHasTurn(hasTurn1);
     }
 
+    @Override
     public void evaluateMove(User loggedInUser) throws IOException {
         System.out.println("Evaluating move");
         var enemy = Main
