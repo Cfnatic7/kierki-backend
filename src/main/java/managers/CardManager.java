@@ -60,6 +60,7 @@ public class CardManager {
             System.out.println("Move incorrect");
             return;
         }
+        validators.get(room.getRoundNumber().ordinal()).setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
         sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
         sendCardToEnemy(loggedInUser, sendEnemyCardDataOut);
         validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);

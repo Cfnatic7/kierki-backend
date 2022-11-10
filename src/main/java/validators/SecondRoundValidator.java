@@ -1,6 +1,7 @@
 package validators;
 
 import data.User;
+import enums.Suit;
 
 import java.io.IOException;
 
@@ -15,7 +16,14 @@ public class SecondRoundValidator extends Validator {
 
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
-        return false;
+        if (!firstRoundValidator.isMoveCorrect(loggedInUser)) return false;
+        var filteredHearts = loggedInUser.getCardsInHand().stream()
+                .filter(card -> card
+                .getSuit() == Suit.KIER)
+                .toList();
+        if (loggedInUser.isFirstTurn()) {
+            if (!filteredHearts.isEmpty()) return false;
+        }
     }
 
     @Override
