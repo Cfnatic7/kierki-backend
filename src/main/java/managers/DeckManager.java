@@ -37,4 +37,21 @@ public class DeckManager {
         }
         dataOut.writeUTF(Responses.END_RECEIVE_CARDS.name());
     }
+
+    public void handleGetHandSendEnemyCardSocket(User loggedInUser) throws IOException {
+        var sendEnemySocketDataOut = new DataOutputStream(loggedInUser.getSendEnemyCardSocket().getOutputStream());
+        Deck roomDeck = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getDeck();
+        roomDeck.shuffleDeck();
+        for (int i = 0; i < Deck.HALF_THE_DECK; i++) {
+            try {
+                Card card = roomDeck.getCard();
+                sendEnemySocketDataOut.writeUTF(card.getSuit().name());
+                sendEnemySocketDataOut.writeUTF(card.getRank().name());
+                loggedInUser.getCardsInHand().add(card);
+            } catch(EmptyDeckException e) {
+                System.out.println("Deck is empty");
+            }
+        }
+        sendEnemySocketDataOut.writeUTF(Responses.END_RECEIVE_CARDS.name());
+    }
 }

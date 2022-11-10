@@ -3,10 +3,7 @@ package managers;
 import app.Main;
 import data.Card;
 import data.User;
-import enums.Commands;
-import enums.Rank;
-import enums.Responses;
-import enums.Suit;
+import enums.*;
 import validators.FirstRoundValidator;
 import validators.Validator;
 
@@ -28,12 +25,15 @@ public class CardManager {
 
     private DataOutputStream clientDataOut;
 
+    private DeckManager deckManager;
 
-    public CardManager(Socket clientSocket, Socket roomSocket) throws IOException {
+
+    public CardManager(Socket clientSocket, Socket roomSocket, DeckManager deckManager) throws IOException {
         this.clientSocket = clientSocket;
         this.roomSocket = roomSocket;
         this.clientDataIn = new DataInputStream(clientSocket.getInputStream());
         this.clientDataOut = new DataOutputStream(clientSocket.getOutputStream());
+        this.deckManager = deckManager;
     }
 
     public void setUserCard(User player) throws IOException {
@@ -49,14 +49,11 @@ public class CardManager {
         System.out.println("Suit: " + loggedInUser.getCardPlayed().getSuit().name());
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
         int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
-        int ourIndex = indexOfEnemy == 0 ? 1 : 0;
-        var sendEnemyCardDataOut = new DataOutputStream(room.getPlayers()
-                .get(indexOfEnemy)
+        var enemy = room.getPlayers().get(indexOfEnemy);
+        var sendEnemyCardDataOut = new DataOutputStream(enemy
                 .getSendEnemyCardSocket()
                 .getOutputStream());
-        var sendOurCardDataOut = new DataOutputStream(room
-                .getPlayers()
-                .get(ourIndex)
+        var sendOurCardDataOut = new DataOutputStream(loggedInUser
                 .getSendEnemyCardSocket()
                 .getOutputStream());
         if (!validators.get(room.getRoundNumber().ordinal()).isMoveCorrect(loggedInUser)) {
@@ -70,6 +67,18 @@ public class CardManager {
 //        room.getPlayers().get(indexOfEnemy).setHasTurn(true);
         System.out.println("Card sent to enemy");
         System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
+        if (enemy.getCardsInHand().isEmpty() && loggedInUser.getCardsInHand().isEmpty()) {
+            if (room.getRoundNumber().equals(RoundNumber.SEVENTH)) {
+                System.out.println("game end");
+                return;
+            }
+            System.out.println("Going to the next round");
+            room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
+            sendOurCardDataOut.writeUTF(Responses.SEND_HAND.name());
+            sendEnemyCardDataOut.writeUTF(Responses.SEND_HAND.name());
+            deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);
+            deckManager.handleGetHandSendEnemyCardSocket(enemy);
+        }
     }
 
     private void sendCardToEnemy(User loggedInUser, DataOutputStream sendEnemyCardDataOut) throws IOException {

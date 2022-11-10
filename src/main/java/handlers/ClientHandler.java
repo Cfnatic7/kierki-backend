@@ -48,7 +48,7 @@ public class ClientHandler extends Thread {
         this.roomSocket = roomSocket;
         deckManager = new DeckManager(dataIn, dataOut);
         this.sendEnemyCardSocket = sendEnemyCardSocket;
-        this.cardManager = new CardManager(clientSocket, roomSocket);
+        this.cardManager = new CardManager(clientSocket, roomSocket, deckManager);
     }
 
     @Override
