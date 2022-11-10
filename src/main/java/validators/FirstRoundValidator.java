@@ -17,22 +17,18 @@ public class FirstRoundValidator extends Validator {
         int enemyIndex = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
         var enemy = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().get(enemyIndex);
         if (!loggedInUser.hasTurn()) {
-            loggedInUser.setCardPlayed(null);
             return false;
         }
         if (loggedInUser.isFirstTurn()) {
-            setHasTurn(enemy, true, loggedInUser, false);
             return true;
         } else {
             var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
             int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
             var enemyPlayer = room.getPlayers().get(indexOfEnemy);
             if (enemyPlayer.getCardPlayed() == null) {
-                loggedInUser.setCardPlayed(null);
                 return false;
             }
             if (loggedInUser.getCardPlayed().getSuit() == enemyPlayer.getCardPlayed().getSuit()) {
-                setHasTurn(enemy, true, loggedInUser, false);
                 return true;
             }
             var filteredCards = loggedInUser
@@ -40,7 +36,6 @@ public class FirstRoundValidator extends Validator {
                     .stream()
                     .filter((card) -> card.getSuit() == enemyPlayer.getCardPlayed().getSuit()).toList();
             if (filteredCards.size() > 0 && loggedInUser.getCardPlayed().getSuit() != enemyPlayer.getCardPlayed().getSuit()) {
-                loggedInUser.setCardPlayed(null);
                 System.out.println("Number of cards of the same color in possesion: " + filteredCards.size());
                 System.out.println(filteredCards.get(0).getSuit());
                 System.out.println(filteredCards.get(0).getRank());
@@ -64,32 +59,20 @@ public class FirstRoundValidator extends Validator {
         if (loggedInUser.getCardPlayed() == null || enemy.getCardPlayed() == null) return;
         if (loggedInUser.isFirstTurn()) {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
-                writePoints(loggedInUser, POINTS, 0);
-                writePoints(enemy, 0, POINTS);
-                setTurns(loggedInUser, enemy, true, false);
+                handlePlayersConfiguration(loggedInUser, POINTS, 0, enemy, true, false);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
-                writePoints(loggedInUser, POINTS, 0);
-                writePoints(enemy, 0, POINTS);
-                setTurns(loggedInUser, enemy, true, false);
+                handlePlayersConfiguration(loggedInUser, POINTS, 0, enemy, true, false);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() < enemy.getCardPlayed().getRank().ordinal()) {
-                writePoints(loggedInUser, 0, POINTS);
-                writePoints(enemy, POINTS, 0);
-                setTurns(loggedInUser, enemy, false, true);
+                handlePlayersConfiguration(loggedInUser, 0, POINTS, enemy, false, true);
             }
         }
         else {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
-                writePoints(loggedInUser, 0, POINTS);
-                writePoints(enemy, POINTS, 0);
-                setTurns(loggedInUser, enemy, false, true);
+                handlePlayersConfiguration(loggedInUser, 0, POINTS, enemy, false, true);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
-                writePoints(loggedInUser, POINTS, 0);
-                writePoints(enemy, 0, POINTS);
-                setTurns(loggedInUser, enemy, true, false);
+                handlePlayersConfiguration(loggedInUser, POINTS, 0, enemy, true, false);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() < enemy.getCardPlayed().getRank().ordinal()) {
-                writePoints(loggedInUser, 0, POINTS);
-                writePoints(enemy, POINTS, 0);
-                setTurns(loggedInUser, enemy, false, true);
+                handlePlayersConfiguration(loggedInUser, 0, POINTS, enemy, false, true);
             }
         }
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
@@ -99,5 +82,11 @@ public class FirstRoundValidator extends Validator {
         enemy.getCardsInHand().remove(enemy.getCardPlayed());
         loggedInUser.setCardPlayed(null);
         enemy.setCardPlayed(null);
+    }
+
+    private void handlePlayersConfiguration(User loggedInUser, int POINTS, int enemyPoints, User enemy, boolean ourTurn, boolean enemyTurn) throws IOException {
+        writePoints(loggedInUser, POINTS, enemyPoints);
+        writePoints(enemy, enemyPoints, POINTS);
+        setTurns(loggedInUser, enemy, ourTurn, enemyTurn);
     }
 }
