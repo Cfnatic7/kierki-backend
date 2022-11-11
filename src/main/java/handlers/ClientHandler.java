@@ -70,6 +70,7 @@ public class ClientHandler extends Thread {
                     registerManager.handleRegister();
                 } else if (command.equals(Commands.JOIN_ROOM.name())) {
                     roomManager.handleRoomJoin(loggedInUser, clientSocket);
+                    deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);
                 } else if (command.equals(Commands.LEAVE_ROOM.name())) {
                     roomManager.handleLeaveRoom(loggedInUser, clientSocket);
                 } else if (command.equals(Commands.LOGOUT.name())) {

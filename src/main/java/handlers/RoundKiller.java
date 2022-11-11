@@ -49,10 +49,9 @@ public class RoundKiller extends Thread {
                         if (room.isFull()) {
                             room.goToNextRound();
                             System.out.println("Going to the next round");
-                            playerOneDataOut.writeUTF(Responses.NEXT_ROUND.name());
                             playerTwoDataOut.writeUTF(Responses.NEXT_ROUND.name());
                             playerOneDataOut.writeUTF(Responses.SEND_HAND.name());
-                            playerTwoDataOut.writeUTF(Responses.SEND_HAND.name());
+
                             deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(0));
                             deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(1));
                             System.out.println(room);

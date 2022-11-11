@@ -45,6 +45,8 @@ public class DeckManager {
     public void handleGetHandSendEnemyCardSocket(User loggedInUser) throws IOException {
         System.out.println("Sending cards");
         var sendEnemySocketDataOut = new DataOutputStream(loggedInUser.getSendEnemyCardSocket().getOutputStream());
+        sendEnemySocketDataOut.writeUTF(Responses.NEXT_ROUND.name());
+        sendEnemySocketDataOut.writeUTF(Responses.SEND_HAND.name());
         Deck roomDeck = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getDeck();
         roomDeck.shuffleDeck();
         loggedInUser.getCardsInHand().clear();
