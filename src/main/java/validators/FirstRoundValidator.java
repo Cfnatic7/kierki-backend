@@ -15,8 +15,6 @@ public class FirstRoundValidator extends Validator {
 
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
-        int enemyIndex = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
-        var enemy = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().get(enemyIndex);
         if (!loggedInUser.hasTurn()) {
             return false;
         }

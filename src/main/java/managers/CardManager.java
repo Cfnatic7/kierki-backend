@@ -62,11 +62,11 @@ public class CardManager {
             loggedInUser.setCardPlayed(null);
             return;
         }
+        sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
+        sendEnemyCardToClient(loggedInUser, sendEnemyCardDataOut);
+        var pointWrapper = validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
         validators.get(room.getRoundNumber().ordinal())
                 .setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
-        sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
-        sendCardToEnemy(loggedInUser, sendEnemyCardDataOut);
-        var pointWrapper = validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
         if (pointWrapper != null) {
             validators.get(room.getRoundNumber().ordinal()).sendEvaluationToUsers(loggedInUser,
                     pointWrapper.getFirstPlayerPoint(), pointWrapper.getSecondPlayerPoints());
@@ -88,9 +88,11 @@ public class CardManager {
             deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);
             deckManager.handleGetHandSendEnemyCardSocket(enemy);
         }
+        System.out.println(loggedInUser);
+        System.out.println(enemy);
     }
 
-    private void sendCardToEnemy(User loggedInUser, DataOutputStream sendEnemyCardDataOut) throws IOException {
+    private void sendEnemyCardToClient(User loggedInUser, DataOutputStream sendEnemyCardDataOut) throws IOException {
         sendEnemyCardDataOut.writeUTF(Responses.SEND_ENEMY_CARD.name());
         sendEnemyCardDataOut.writeUTF(loggedInUser.getCardPlayed().getSuit().name());
         sendEnemyCardDataOut.writeUTF(loggedInUser.getCardPlayed().getRank().name());

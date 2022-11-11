@@ -51,5 +51,9 @@ public abstract class Validator {
             loggedInUser.setFirstTurn(true);
             enemy.setFirstTurn(false);
         }
+        else {
+            loggedInUser.setFirstTurn(false);
+            enemy.setFirstTurn(true);
+        }
     }
 }

@@ -36,4 +36,9 @@ public class Card {
         return cardToCompare.rank == this.rank && cardToCompare.suit == this.suit;
     }
 
+    @Override
+    public String toString() {
+        return "Suit: " + this.getSuit().name() + " Rank: " + this.getRank().name() + "\n";
+    }
+
 }
