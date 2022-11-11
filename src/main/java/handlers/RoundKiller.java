@@ -28,20 +28,26 @@ public class RoundKiller extends Thread {
 
     @Override
     public void run() {
-        while(isRunning) {
-            synchronized (Main.LOCK) {
-                try {
-                    String command = systemIn.readLine();
-                    String subCommand = command.split(" ")[0];
-                    RoomNumber roomNumber = RoomNumber.values()[Integer.parseInt(command.split(" ")[1]) - 1];
-                    var room = Main.rooms.get(roomNumber.ordinal());
-                    var playerOneDataOut = new DataOutputStream(room.getPlayers()
-                            .get(0).getSendEnemyCardSocket().getOutputStream());
-                    var playerTwoDataOut = new DataOutputStream(room.getPlayers()
-                            .get(1).getSendEnemyCardSocket().getOutputStream());
-                    if (subCommand.equals("nextround")) {
-                        try {
-                            if (room.isFull()) {
+        while (isRunning) {
+            String command = null;
+            try {
+                command = systemIn.readLine();
+            } catch (IOException e) {
+                System.out.println("Can't receive command");
+                kill();
+            }
+            try {
+                String subCommand = command.split(" ")[0];
+                RoomNumber roomNumber = RoomNumber.values()[Integer.parseInt(command.split(" ")[1]) - 1];
+                var room = Main.rooms.get(roomNumber.ordinal());
+                var playerOneDataOut = new DataOutputStream(room.getPlayers()
+                        .get(0).getSendEnemyCardSocket().getOutputStream());
+                var playerTwoDataOut = new DataOutputStream(room.getPlayers()
+                        .get(1).getSendEnemyCardSocket().getOutputStream());
+                if (subCommand.equals("nextround")) {
+                    try {
+                        if (room.isFull()) {
+                            synchronized (Main.LOCK) {
                                 room.goToNextRound();
                                 System.out.println("Going to the next round");
                                 room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
@@ -52,14 +58,15 @@ public class RoundKiller extends Thread {
                                 deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(0));
                                 deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(1));
                             }
-                        } catch (Exception e) {
-                            System.out.printf("Bad command: %s%n", command);
                         }
+                    } catch (Exception e) {
+                        System.out.printf("Bad command: %s%n", command);
                     }
-                } catch (IOException e) {
-                    System.out.println("Couldn't read command");
                 }
+            } catch (IOException e) {
+                System.out.println("Couldn't read command");
             }
+
         }
     }
 

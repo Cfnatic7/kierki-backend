@@ -51,9 +51,15 @@ public class ClientHandler extends Thread {
     @Override
     public void run() {
         while (isrunning) {
+            String command = null;
+            try {
+                command = dataIn.readUTF();
+            } catch (IOException e) {
+                System.out.println("Can't receive command");
+                kill();
+            }
             synchronized (Main.LOCK) {
                 try {
-                    String command = dataIn.readUTF();
                     if (command.equals(Commands.LOGIN.name())) {
                         var user = loginManager.handleLogin();
                         user.ifPresent(value -> {
