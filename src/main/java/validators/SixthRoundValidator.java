@@ -68,6 +68,10 @@ public class SixthRoundValidator extends Validator{
             writePoints(loggedInUser, POINTS, enemyPoints);
             writePoints(enemy, enemyPoints, POINTS);
         }
+        else {
+            writePoints(loggedInUser, 0, 0);
+            writePoints(enemy, 0, 0);
+        }
         setTurns(loggedInUser, enemy, ourTurn, enemyTurn);
     }
 }

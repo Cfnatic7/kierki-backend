@@ -83,6 +83,15 @@ public class SecondRoundValidator extends Validator {
                     throw new RuntimeException(e);
                 }
             }
+            else {
+                try {
+                    writePoints(loggedInUser, 0, 0);
+                    writePoints(enemy, 0, 0);
+                } catch (IOException e) {
+                    System.out.println("Couldn't send cards");
+                    throw new RuntimeException(e);
+                }
+            }
         });
         setTurns(loggedInUser, enemy, ourTurn, enemyTurn);
     }
