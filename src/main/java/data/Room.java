@@ -17,10 +17,13 @@ public class Room {
 
     private final Deck deck;
 
+    private int subRound;
+
     public Room(RoomNumber roomNumber) {
         this.roomNumber = roomNumber;
         players = new ArrayList<>();
         deck = new Deck();
+        subRound = 0;
     }
 
     public RoomNumber getRoomNumber() {
@@ -57,6 +60,14 @@ public class Room {
 
     public void setRoundNumber(RoundNumber roundNumber) {
         this.roundNumber = roundNumber;
+    }
+
+    public int getSubRound() {
+        return subRound;
+    }
+
+    public void setSubRound(int subRound) {
+        this.subRound = subRound;
     }
 
 }

@@ -63,10 +63,12 @@ public class CardManager {
             loggedInUser.setCardPlayed(null);
             return;
         }
-        validators.get(room.getRoundNumber().ordinal()).setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
+        validators.get(room.getRoundNumber().ordinal())
+                .setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
         sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
         sendCardToEnemy(loggedInUser, sendEnemyCardDataOut);
         validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
+        room.setSubRound(room.getSubRound() + 1);
         System.out.println("Card sent to enemy");
         System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
         if (enemy.getCardsInHand().isEmpty() && loggedInUser.getCardsInHand().isEmpty()) {
@@ -74,6 +76,7 @@ public class CardManager {
                 System.out.println("game end");
                 return;
             }
+            room.setSubRound(1);
             System.out.println("Going to the next round");
             room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
             sendOurCardDataOut.writeUTF(Responses.SEND_HAND.name());

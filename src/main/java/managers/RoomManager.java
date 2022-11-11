@@ -65,7 +65,9 @@ public class RoomManager {
         var dataOut = new DataOutputStream(clientSocket.getOutputStream());
         dataOut.writeUTF(Responses.OK.name());
         RoomNumber roomNumber = RoomNumber.valueOf(dataIn.readUTF());
-        Main.rooms.get(roomNumber.ordinal()).setRoundNumber(RoundNumber.FIRST);
+        var room = Main.rooms.get(roomNumber.ordinal());
+        room.setSubRound(1);
+        room.setRoundNumber(RoundNumber.FIRST);
         if (roomNumber == RoomNumber.ONE) {
             try {
                 sendJoinRoomResponse(0, player, dataOut);
