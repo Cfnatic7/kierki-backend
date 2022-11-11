@@ -75,7 +75,7 @@ public class CardManager {
                 System.out.println("game end");
                 return;
             }
-            room.setSubRound(1);
+            room.goToNextRound();
             System.out.println("Going to the next round");
             room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
             sendOurCardDataOut.writeUTF(Responses.NEXT_ROUND.name());

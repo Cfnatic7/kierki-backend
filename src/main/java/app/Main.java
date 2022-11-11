@@ -1,5 +1,6 @@
 package app;
 
+import data.Lock;
 import data.UserAccounts;
 import enums.RoomNumber;
 import handlers.ClientHandler;
@@ -16,6 +17,8 @@ import java.util.List;
 public class Main {
 
     private final static List<Socket> clients = new ArrayList<>();
+
+    public final static Lock LOCK = new Lock();
 
     public volatile static List<Socket> roomSockets = new ArrayList<>();
 

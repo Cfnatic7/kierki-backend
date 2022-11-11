@@ -130,11 +130,18 @@ public class RoomManager {
             dataOut.writeUTF(Responses.OK.name());
             return;
         }
-        Main.rooms.get(player.getRoomNumber().ordinal()).removeplayer(player);
+        var room = Main.rooms.get(player.getRoomNumber().ordinal());
+        int enemyPlayerIndex = room.getPlayers().indexOf(player) == 0 ? 1 : 0;
+        var enemy = room.getPlayers().get(enemyPlayerIndex);
+        var ourDataOut = new DataOutputStream(player.getSendEnemyCardSocket().getOutputStream());
+        var enemyDataOut = new DataOutputStream(enemy.getSendEnemyCardSocket().getOutputStream());
+        ourDataOut.writeUTF(Responses.RESET.name());
+        enemyDataOut.writeUTF(Responses.RESET.name());
+        room.removeplayer(player);
+        room.getDeck().clearDeck();
+        room.getDeck().refill();
+        room.setSubRound(0);
         Room playerRoom = Main.rooms.get(player.getRoomNumber().ordinal());
-        for (Card card : player.getCardsInHand()) {
-            playerRoom.getDeck().addCard(card);
-        }
         player.getCardsInHand().clear();
         player.setRoomNumber(null);
         toNotify = true;

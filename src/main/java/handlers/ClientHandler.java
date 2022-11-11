@@ -1,9 +1,8 @@
 package handlers;
 
+import app.Main;
 import data.User;
 import enums.Commands;
-import enums.Rank;
-import enums.Suit;
 import managers.*;
 
 import java.io.DataInputStream;
@@ -54,39 +53,41 @@ public class ClientHandler extends Thread {
     @Override
     public void run() {
         while (isrunning) {
-            try {
-                String command = dataIn.readUTF();
-                if (command.equals(Commands.LOGIN.name())) {
-                    var user = loginManager.handleLogin();
-                    user.ifPresent(value -> {
-                        loggedInUser = value;
-                        user.get().setClientSocket(clientSocket);
-                        user.get().setSendEnemyCardSocket(sendEnemyCardSocket);
-                    });
+            synchronized (Main.LOCK) {
+                try {
+                    String command = dataIn.readUTF();
+                    if (command.equals(Commands.LOGIN.name())) {
+                        var user = loginManager.handleLogin();
+                        user.ifPresent(value -> {
+                            loggedInUser = value;
+                            user.get().setClientSocket(clientSocket);
+                            user.get().setSendEnemyCardSocket(sendEnemyCardSocket);
+                        });
+                    }
+                    else if (command.equals(Commands.REGISTER.name())) {
+                        registerManager.handleRegister();
+                    }
+                    else if (command.equals(Commands.JOIN_ROOM.name())) {
+                        roomManager.handleRoomJoin(loggedInUser, clientSocket);
+                    }
+                    else if (command.equals(Commands.LEAVE_ROOM.name())) {
+                        roomManager.handleLeaveRoom(loggedInUser, clientSocket);
+                    }
+                    else if (command.equals(Commands.LOGOUT.name())) {
+                        roomManager.handleLeaveRoom(loggedInUser, clientSocket);
+                        loginManager.handleLogout(loggedInUser);
+                    }
+                    else if (command.equals(Commands.GET_HAND.name())) {
+                        deckManager.handleGetHand(loggedInUser);
+                    }
+                    else if (command.equals(Commands.PLAY_CARD.name())) {
+                        cardManager.setUserCard(loggedInUser);
+                        cardManager.handlePlayCard(loggedInUser);
+                    }
+                } catch (IOException e) {
+                    System.out.println("Can't receive user command");
+                    kill();
                 }
-                else if (command.equals(Commands.REGISTER.name())) {
-                    registerManager.handleRegister();
-                }
-                else if (command.equals(Commands.JOIN_ROOM.name())) {
-                    roomManager.handleRoomJoin(loggedInUser, clientSocket);
-                }
-                else if (command.equals(Commands.LEAVE_ROOM.name())) {
-                    roomManager.handleLeaveRoom(loggedInUser, clientSocket);
-                }
-                else if (command.equals(Commands.LOGOUT.name())) {
-                    roomManager.handleLeaveRoom(loggedInUser, clientSocket);
-                    loginManager.handleLogout(loggedInUser);
-                }
-                else if (command.equals(Commands.GET_HAND.name())) {
-                    deckManager.handleGetHand(loggedInUser);
-                }
-                else if (command.equals(Commands.PLAY_CARD.name())) {
-                    cardManager.setUserCard(loggedInUser);
-                    cardManager.handlePlayCard(loggedInUser);
-                }
-            } catch (IOException e) {
-                System.out.println("Can't receive user command");
-                kill();
             }
         }
     }

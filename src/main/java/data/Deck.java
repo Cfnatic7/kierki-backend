@@ -27,6 +27,10 @@ public class Deck {
         Collections.shuffle(cards);
     }
 
+    public void clearDeck() {
+        cards.clear();
+    }
+
     public void shuffleDeck() {
         Collections.shuffle(cards);
     }
