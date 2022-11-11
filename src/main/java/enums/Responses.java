@@ -11,7 +11,6 @@ public enum Responses {
     ENEMY_POINTS,
     SEND_ENEMY_CARD,
     PLAY_CARD_ACK,
-    MOVE_INCORRECT,
-    NEXT_ROUND,
     SEND_HAND,
+    NEXT_ROUND,
 }

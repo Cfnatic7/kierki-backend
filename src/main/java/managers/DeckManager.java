@@ -52,6 +52,5 @@ public class DeckManager {
                 System.out.println("Deck is empty");
             }
         }
-        sendEnemySocketDataOut.writeUTF(Responses.END_RECEIVE_CARDS.name());
     }
 }

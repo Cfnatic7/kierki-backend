@@ -4,9 +4,7 @@ import app.Main;
 import data.Card;
 import data.User;
 import enums.*;
-import validators.FirstRoundValidator;
-import validators.SecondRoundValidator;
-import validators.Validator;
+import validators.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,7 +15,8 @@ import java.util.List;
 public class CardManager {
 
     private final List<Validator> validators = List.of(new FirstRoundValidator(),
-            new SecondRoundValidator());
+            new SecondRoundValidator(), new ThirdRoundValidator(), new FourthRoundValidator(),
+            new FifthRoundValidator(), new SixthRoundValidator(), new SeventhRoundValidator());
 
     private Socket clientSocket;
 
@@ -79,6 +78,8 @@ public class CardManager {
             room.setSubRound(1);
             System.out.println("Going to the next round");
             room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
+            sendOurCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
+            sendEnemyCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
             sendOurCardDataOut.writeUTF(Responses.SEND_HAND.name());
             sendEnemyCardDataOut.writeUTF(Responses.SEND_HAND.name());
             deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);

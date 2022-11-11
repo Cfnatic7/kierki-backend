@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SeventhRoundValidator extends Validator {
 
-    private List<Validator> validators;
+    private final List<Validator> validators;
 
     public SeventhRoundValidator() {
         validators = List.of(new FirstRoundValidator(), new SecondRoundValidator(),
