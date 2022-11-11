@@ -47,6 +47,7 @@ public class DeckManager {
         var sendEnemySocketDataOut = new DataOutputStream(loggedInUser.getSendEnemyCardSocket().getOutputStream());
         Deck roomDeck = Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getDeck();
         roomDeck.shuffleDeck();
+        loggedInUser.getCardsInHand().clear();
         for (int i = 0; i < Deck.HALF_THE_DECK; i++) {
             try {
                 Card card = roomDeck.getCard();

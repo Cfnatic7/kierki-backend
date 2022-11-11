@@ -1,6 +1,7 @@
 package validators;
 
 import app.Main;
+import data.PointWrapper;
 import data.User;
 import java.io.IOException;
 
@@ -48,7 +49,7 @@ public class FirstRoundValidator extends Validator {
     }
 
     @Override
-    public void evaluateMove(User loggedInUser) throws IOException {
+    public PointWrapper evaluateMove(User loggedInUser) {
         System.out.println("Evaluating move");
         var enemy = Main
                 .rooms
@@ -56,37 +57,26 @@ public class FirstRoundValidator extends Validator {
                 .getPlayers()
                 .get(Main.rooms.get(loggedInUser.getRoomNumber().ordinal()).getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0);
 
-        if (loggedInUser.getCardPlayed() == null || enemy.getCardPlayed() == null) return;
+        if (loggedInUser.getCardPlayed() == null || enemy.getCardPlayed() == null) return null;
         if (loggedInUser.isFirstTurn()) {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
-                handlePlayersConfiguration(loggedInUser, POINTS, 0, enemy, true, false);
+                return new PointWrapper(POINTS, 0);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
-                handlePlayersConfiguration(loggedInUser, POINTS, 0, enemy, true, false);
+                return new PointWrapper(POINTS, 0);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() < enemy.getCardPlayed().getRank().ordinal()) {
-                handlePlayersConfiguration(loggedInUser, 0, POINTS, enemy, false, true);
+                return new PointWrapper(0, POINTS);
             }
         }
         else {
             if (loggedInUser.getCardPlayed().getSuit() != enemy.getCardPlayed().getSuit()) {
-                handlePlayersConfiguration(loggedInUser, 0, POINTS, enemy, false, true);
+                return new PointWrapper(0, POINTS);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() > enemy.getCardPlayed().getRank().ordinal()) {
-                handlePlayersConfiguration(loggedInUser, POINTS, 0, enemy, true, false);
+                return new PointWrapper(POINTS, 0);
             } else if (loggedInUser.getCardPlayed().getRank().ordinal() < enemy.getCardPlayed().getRank().ordinal()) {
-                handlePlayersConfiguration(loggedInUser, 0, POINTS, enemy, false, true);
+                return new PointWrapper(0, POINTS);
             }
+            return null;
         }
-        var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
-        room.getDeck().getCards().add(loggedInUser.getCardPlayed());
-        room.getDeck().getCards().add(enemy.getCardPlayed());
-        loggedInUser.getCardsInHand().remove(loggedInUser.getCardPlayed());
-        enemy.getCardsInHand().remove(enemy.getCardPlayed());
-        loggedInUser.setCardPlayed(null);
-        enemy.setCardPlayed(null);
-    }
-
-    private void handlePlayersConfiguration(User loggedInUser, int POINTS, int enemyPoints, User enemy, boolean ourTurn, boolean enemyTurn) throws IOException {
-        writePoints(loggedInUser, POINTS, enemyPoints);
-        writePoints(enemy, enemyPoints, POINTS);
-        setTurns(loggedInUser, enemy, ourTurn, enemyTurn);
+        return null;
     }
 }

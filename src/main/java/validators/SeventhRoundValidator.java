@@ -1,8 +1,7 @@
 package validators;
 
+import data.PointWrapper;
 import data.User;
-
-import java.io.IOException;
 import java.util.List;
 
 public class SeventhRoundValidator extends Validator {
@@ -21,9 +20,11 @@ public class SeventhRoundValidator extends Validator {
     }
 
     @Override
-    public void evaluateMove(User loggedInUser) throws IOException {
+    public PointWrapper evaluateMove(User loggedInUser) {
+        PointWrapper pointWrapper = new PointWrapper(0 ,0);
         for (var validator : validators) {
-            validator.evaluateMove(loggedInUser);
+            pointWrapper.add(validator.evaluateMove(loggedInUser));
         }
+        return pointWrapper;
     }
 }

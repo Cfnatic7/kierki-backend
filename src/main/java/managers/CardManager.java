@@ -66,8 +66,11 @@ public class CardManager {
                 .setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
         sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
         sendCardToEnemy(loggedInUser, sendEnemyCardDataOut);
-        validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
-        room.setSubRound(room.getSubRound() + 1);
+        var pointWrapper = validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
+        if (pointWrapper != null) {
+            validators.get(room.getRoundNumber().ordinal()).sendEvaluationToUsers(loggedInUser,
+                    pointWrapper.getFirstPlayerPoint(), pointWrapper.getSecondPlayerPoints());
+        }
         System.out.println("Card sent to enemy");
         System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
         if (enemy.getCardsInHand().isEmpty() && loggedInUser.getCardsInHand().isEmpty()) {
