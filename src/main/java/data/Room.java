@@ -1,5 +1,6 @@
 package data;
 
+import app.Main;
 import enums.RoomNumber;
 import enums.RoundNumber;
 import exceptions.RoomIsFullException;
@@ -9,15 +10,15 @@ import java.util.List;
 
 public class Room {
 
-    private final List<User> players;
+    private volatile List<User> players;
 
-    private final RoomNumber roomNumber;
+    private volatile RoomNumber roomNumber;
 
-    private RoundNumber roundNumber;
+    private volatile RoundNumber roundNumber;
 
-    private final Deck deck;
+    private volatile Deck deck;
 
-    private int subRound;
+    private volatile int subRound;
 
     public Room(RoomNumber roomNumber) {
         this.roomNumber = roomNumber;
@@ -71,7 +72,9 @@ public class Room {
     }
 
     public void goToNextRound() {
-        this.roundNumber = RoundNumber.values()[this.roundNumber.ordinal() + 1];
+        synchronized (Main.LOCK) {
+            this.roundNumber = RoundNumber.values()[this.roundNumber.ordinal() + 1];
+        }
         this.subRound = 0;
         this.deck.clearDeck();
         this.deck.refill();
@@ -83,6 +86,16 @@ public class Room {
         playerTwo.setHasTurn(false);
         playerOne.setFirstTurn(true);
         playerTwo.setFirstTurn(false);
+    }
+
+    @Override
+    public String toString() {
+        return "Room number: " + this.roomNumber.ordinal() + 1 + "\n" +
+                "Subround number: " + this.subRound + "\n" +
+                "Round number: " + this.roundNumber.ordinal() + 1 + "\n" +
+                "Deck size: " + this.deck.getCards().size() + "\n" +
+                this.players.get(0).toString() +
+                this.players.get(1).toString();
     }
 
 }

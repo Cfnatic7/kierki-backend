@@ -58,43 +58,37 @@ public class ClientHandler extends Thread {
                 System.out.println("Can't receive command");
                 kill();
             }
-            synchronized (Main.LOCK) {
-                try {
-                    if (command.equals(Commands.LOGIN.name())) {
-                        var user = loginManager.handleLogin();
-                        user.ifPresent(value -> {
-                            loggedInUser = value;
-                            user.get().setClientSocket(clientSocket);
-                            user.get().setSendEnemyCardSocket(sendEnemyCardSocket);
-                        });
-                    }
-                    else if (command.equals(Commands.REGISTER.name())) {
-                        registerManager.handleRegister();
-                    }
-                    else if (command.equals(Commands.JOIN_ROOM.name())) {
-                        roomManager.handleRoomJoin(loggedInUser, clientSocket);
-                    }
-                    else if (command.equals(Commands.LEAVE_ROOM.name())) {
-                        roomManager.handleLeaveRoom(loggedInUser, clientSocket);
-                    }
-                    else if (command.equals(Commands.LOGOUT.name())) {
-                        roomManager.handleLeaveRoom(loggedInUser, clientSocket);
-                        loginManager.handleLogout(loggedInUser);
-                    }
-                    else if (command.equals(Commands.GET_HAND.name())) {
-                        deckManager.handleGetHand(loggedInUser);
-                    }
-                    else if (command.equals(Commands.PLAY_CARD.name())) {
-                        cardManager.setUserCard(loggedInUser);
-                        cardManager.handlePlayCard(loggedInUser);
-                    }
-                } catch (IOException e) {
-                    System.out.println("Can't receive user command");
-                    kill();
-                } catch(NullPointerException e) {
-                    System.out.println("Command is null");
+            try {
+                if (command.equals(Commands.LOGIN.name())) {
+                    var user = loginManager.handleLogin();
+                    user.ifPresent(value -> {
+                        loggedInUser = value;
+                        user.get().setClientSocket(clientSocket);
+                        user.get().setSendEnemyCardSocket(sendEnemyCardSocket);
+                    });
+                } else if (command.equals(Commands.REGISTER.name())) {
+                    registerManager.handleRegister();
+                } else if (command.equals(Commands.JOIN_ROOM.name())) {
+                    roomManager.handleRoomJoin(loggedInUser, clientSocket);
+                } else if (command.equals(Commands.LEAVE_ROOM.name())) {
+                    roomManager.handleLeaveRoom(loggedInUser, clientSocket);
+                } else if (command.equals(Commands.LOGOUT.name())) {
+                    roomManager.handleLeaveRoom(loggedInUser, clientSocket);
+                    loginManager.handleLogout(loggedInUser);
+                } else if (command.equals(Commands.GET_HAND.name())) {
+                    deckManager.handleGetHand(loggedInUser);
+                } else if (command.equals(Commands.PLAY_CARD.name())) {
+                    cardManager.setUserCard(loggedInUser);
+                    cardManager.handlePlayCard(loggedInUser);
+                    System.out.println(loggedInUser);
                 }
+            } catch (IOException e) {
+                System.out.println("Can't receive user command");
+                kill();
+            } catch (NullPointerException e) {
+                System.out.println("Command is null");
             }
+
         }
     }
 

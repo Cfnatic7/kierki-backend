@@ -47,17 +47,16 @@ public class RoundKiller extends Thread {
                 if (subCommand.equals("nextround")) {
                     try {
                         if (room.isFull()) {
-                            synchronized (Main.LOCK) {
-                                room.goToNextRound();
-                                System.out.println("Going to the next round");
-                                room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
-                                playerOneDataOut.writeUTF(Responses.NEXT_ROUND.name());
-                                playerTwoDataOut.writeUTF(Responses.NEXT_ROUND.name());
-                                playerOneDataOut.writeUTF(Responses.SEND_HAND.name());
-                                playerTwoDataOut.writeUTF(Responses.SEND_HAND.name());
-                                deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(0));
-                                deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(1));
-                            }
+                            room.goToNextRound();
+                            System.out.println("Going to the next round");
+                            room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
+                            playerOneDataOut.writeUTF(Responses.NEXT_ROUND.name());
+                            playerTwoDataOut.writeUTF(Responses.NEXT_ROUND.name());
+                            playerOneDataOut.writeUTF(Responses.SEND_HAND.name());
+                            playerTwoDataOut.writeUTF(Responses.SEND_HAND.name());
+                            deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(0));
+                            deckManager.handleGetHandSendEnemyCardSocket(room.getPlayers().get(1));
+                            System.out.println(room);
                         }
                     } catch (Exception e) {
                         System.out.printf("Bad command: %s%n", command);

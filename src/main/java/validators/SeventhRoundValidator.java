@@ -16,6 +16,7 @@ public class SeventhRoundValidator extends Validator {
 
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
+        System.out.println("Seventh round validation");
         return validators.get(0).isMoveCorrect(loggedInUser) && validators.get(1).isMoveCorrect(loggedInUser);
     }
 

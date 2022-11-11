@@ -17,6 +17,7 @@ public class FifthRoundValidator extends Validator {
     private final SecondRoundValidator secondRoundValidator;
 
     public FifthRoundValidator() {
+        System.out.println("Fifth round validation");
         secondRoundValidator = new SecondRoundValidator();
     }
 

@@ -22,6 +22,7 @@ public class ThirdRoundValidator extends Validator {
 
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
+        System.out.println("Third round validation");
         return firstRoundValidator.isMoveCorrect(loggedInUser);
     }
 

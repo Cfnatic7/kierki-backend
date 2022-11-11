@@ -2,6 +2,7 @@ package managers;
 
 import app.Main;
 import data.Card;
+import data.Room;
 import data.User;
 import enums.*;
 import validators.*;
@@ -65,8 +66,7 @@ public class CardManager {
         sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
         sendEnemyCardToClient(loggedInUser, sendEnemyCardDataOut);
         var pointWrapper = validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
-        validators.get(room.getRoundNumber().ordinal())
-                .setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
+        handlePlayersTurns(loggedInUser, room, enemy);
         if (pointWrapper != null) {
             validators.get(room.getRoundNumber().ordinal()).sendEvaluationToUsers(loggedInUser,
                     pointWrapper.getFirstPlayerPoint(), pointWrapper.getSecondPlayerPoints());
@@ -79,8 +79,8 @@ public class CardManager {
                 return;
             }
             room.goToNextRound();
+            System.out.println(room);
             System.out.println("Going to the next round");
-            room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
             sendOurCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
             sendEnemyCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
             sendOurCardDataOut.writeUTF(Responses.SEND_HAND.name());
@@ -88,8 +88,13 @@ public class CardManager {
             deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);
             deckManager.handleGetHandSendEnemyCardSocket(enemy);
         }
-        System.out.println(loggedInUser);
-        System.out.println(enemy);
+    }
+
+    private void handlePlayersTurns(User loggedInUser, Room room, User enemy) {
+        if (loggedInUser.getCardPlayed() != null && enemy.getCardPlayed() == null) {
+            validators.get(room.getRoundNumber().ordinal())
+                    .setHasTurn(enemy, !enemy.hasTurn(), loggedInUser, !loggedInUser.hasTurn());
+        }
     }
 
     private void sendEnemyCardToClient(User loggedInUser, DataOutputStream sendEnemyCardDataOut) throws IOException {

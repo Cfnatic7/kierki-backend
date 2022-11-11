@@ -22,6 +22,7 @@ public class SecondRoundValidator extends Validator {
 
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
+        System.out.println("Second round validation");
         if (!firstRoundValidator.isMoveCorrect(loggedInUser)) return false;
         var filteredHearts = loggedInUser.getCardsInHand().stream()
                 .filter(card -> card

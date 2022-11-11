@@ -21,6 +21,7 @@ public class FourthRoundValidator extends Validator {
 
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
+        System.out.println("Fourth round validation");
         return firstRoundValidator.isMoveCorrect(loggedInUser);
     }
 

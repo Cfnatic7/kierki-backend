@@ -49,11 +49,15 @@ public abstract class Validator {
         enemy.setCardPlayed(null);
         if (POINTS < enemyPoints) {
             loggedInUser.setFirstTurn(true);
+            loggedInUser.setHasTurn(true);
             enemy.setFirstTurn(false);
+            enemy.setHasTurn(false);
         }
         else {
             loggedInUser.setFirstTurn(false);
+            loggedInUser.setHasTurn(false);
             enemy.setFirstTurn(true);
+            enemy.setHasTurn(true);
         }
     }
 }

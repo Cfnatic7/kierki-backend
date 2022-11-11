@@ -11,15 +11,15 @@ public class User {
 
     private String login;
 
-    private final List<Card> cardsInHand;
+    private volatile List<Card> cardsInHand;
 
     private String password;
 
     private boolean isLoggedIn;
 
-    private Card cardPlayed;
+    private volatile Card cardPlayed;
 
-    private boolean hasTurn;
+    private volatile boolean hasTurn;
 
     private Socket sendEnemyCardSocket;
 
@@ -27,7 +27,7 @@ public class User {
 
     private Socket clientSocket;
 
-    private boolean firstTurn;
+    private volatile boolean firstTurn;
 
     public User(String login, String password, Socket clientSocket, Socket sendEnemyCardSocket) {
         Objects.requireNonNull(login);

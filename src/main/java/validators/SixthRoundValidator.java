@@ -18,6 +18,7 @@ public class SixthRoundValidator extends Validator{
 
 
     public SixthRoundValidator() {
+        System.out.println("Sixth round validation");
         firstRoundValidator = new FirstRoundValidator();
     }
 
