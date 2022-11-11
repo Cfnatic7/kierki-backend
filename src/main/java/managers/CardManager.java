@@ -50,43 +50,45 @@ public class CardManager {
         System.out.println("Rank: " + loggedInUser.getCardPlayed().getRank().name());
         System.out.println("Suit: " + loggedInUser.getCardPlayed().getSuit().name());
         var room = Main.rooms.get(loggedInUser.getRoomNumber().ordinal());
-        int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
-        var enemy = room.getPlayers().get(indexOfEnemy);
-        var sendEnemyCardDataOut = new DataOutputStream(enemy
-                .getSendEnemyCardSocket()
-                .getOutputStream());
-        var sendOurCardDataOut = new DataOutputStream(loggedInUser
-                .getSendEnemyCardSocket()
-                .getOutputStream());
-        if (!validators.get(room.getRoundNumber().ordinal()).isMoveCorrect(loggedInUser)) {
-            System.out.println("Move incorrect");
-            loggedInUser.setCardPlayed(null);
-            return;
-        }
-        sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
-        sendEnemyCardToClient(loggedInUser, sendEnemyCardDataOut);
-        var pointWrapper = validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
-        handlePlayersTurns(loggedInUser, room, enemy);
-        if (pointWrapper != null) {
-            validators.get(room.getRoundNumber().ordinal()).sendEvaluationToUsers(loggedInUser,
-                    pointWrapper.getFirstPlayerPoint(), pointWrapper.getSecondPlayerPoints());
-        }
-        System.out.println("Card sent to enemy");
-        System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
-        if (enemy.getCardsInHand().isEmpty() && loggedInUser.getCardsInHand().isEmpty()) {
-            if (room.getRoundNumber().equals(RoundNumber.SEVENTH)) {
-                System.out.println("game end");
+        if (room.isFull()) {
+            int indexOfEnemy = room.getPlayers().indexOf(loggedInUser) == 0 ? 1 : 0;
+            var enemy = room.getPlayers().get(indexOfEnemy);
+            var sendEnemyCardDataOut = new DataOutputStream(enemy
+                    .getSendEnemyCardSocket()
+                    .getOutputStream());
+            var sendOurCardDataOut = new DataOutputStream(loggedInUser
+                    .getSendEnemyCardSocket()
+                    .getOutputStream());
+            if (!validators.get(room.getRoundNumber().ordinal()).isMoveCorrect(loggedInUser)) {
+                System.out.println("Move incorrect");
+                loggedInUser.setCardPlayed(null);
                 return;
             }
-            room.goToNextRound();
-            System.out.println(room);
-            System.out.println("Going to the next round");
-            sendOurCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
-            sendEnemyCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
-            sendOurCardDataOut.writeUTF(Responses.SEND_HAND.name());
-            sendEnemyCardDataOut.writeUTF(Responses.SEND_HAND.name());
-            deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);
-            deckManager.handleGetHandSendEnemyCardSocket(enemy);
+            sendOurCardDataOut.writeUTF(Responses.PLAY_CARD_ACK.name());
+            sendEnemyCardToClient(loggedInUser, sendEnemyCardDataOut);
+            var pointWrapper = validators.get(room.getRoundNumber().ordinal()).evaluateMove(loggedInUser);
+            handlePlayersTurns(loggedInUser, room, enemy);
+            if (pointWrapper != null) {
+                validators.get(room.getRoundNumber().ordinal()).sendEvaluationToUsers(loggedInUser,
+                        pointWrapper.getFirstPlayerPoint(), pointWrapper.getSecondPlayerPoints());
+            }
+            System.out.println("Card sent to enemy");
+            System.out.println("Number of cards in the deck in room: " + room.getDeck().getCards().size());
+            if (enemy.getCardsInHand().isEmpty() && loggedInUser.getCardsInHand().isEmpty()) {
+                if (room.getRoundNumber().equals(RoundNumber.SEVENTH)) {
+                    System.out.println("game end");
+                    return;
+                }
+                room.goToNextRound();
+                System.out.println(room);
+                System.out.println("Going to the next round");
+                sendOurCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
+                sendEnemyCardDataOut.writeUTF(Responses.NEXT_ROUND.name());
+                sendOurCardDataOut.writeUTF(Responses.SEND_HAND.name());
+                sendEnemyCardDataOut.writeUTF(Responses.SEND_HAND.name());
+                deckManager.handleGetHandSendEnemyCardSocket(loggedInUser);
+                deckManager.handleGetHandSendEnemyCardSocket(enemy);
+            }
         }
     }
 

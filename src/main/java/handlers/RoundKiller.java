@@ -49,7 +49,6 @@ public class RoundKiller extends Thread {
                         if (room.isFull()) {
                             room.goToNextRound();
                             System.out.println("Going to the next round");
-                            room.setRoundNumber(RoundNumber.values()[room.getRoundNumber().ordinal() + 1]);
                             playerOneDataOut.writeUTF(Responses.NEXT_ROUND.name());
                             playerTwoDataOut.writeUTF(Responses.NEXT_ROUND.name());
                             playerOneDataOut.writeUTF(Responses.SEND_HAND.name());
@@ -59,6 +58,7 @@ public class RoundKiller extends Thread {
                             System.out.println(room);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         System.out.printf("Bad command: %s%n", command);
                     }
                 }

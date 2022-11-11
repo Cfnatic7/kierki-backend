@@ -16,6 +16,7 @@ public class FirstRoundValidator extends Validator {
     @Override
     public boolean isMoveCorrect(User loggedInUser) {
         System.out.println("First round validation");
+        System.out.println(loggedInUser);
         if (!loggedInUser.hasTurn()) {
             return false;
         }

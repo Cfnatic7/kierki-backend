@@ -67,7 +67,11 @@ public class User {
 
     @Override
     public String toString() {
-        return "User: " + login + "\n" + this.getCardPlayed().toString() +
+        return this.getCardPlayed() != null ? "User: " + login + "\n" + this.getCardPlayed().toString() +
+                "Turn: " + this.hasTurn + "\n" +
+                "First turn: " + this.firstTurn + "\n" +
+                "Number of cards in possesion: " + this.cardsInHand.size() + "\n" :
+                "User: " + login + "\n" +
                 "Turn: " + this.hasTurn + "\n" +
                 "First turn: " + this.firstTurn + "\n" +
                 "Number of cards in possesion: " + this.cardsInHand.size() + "\n";

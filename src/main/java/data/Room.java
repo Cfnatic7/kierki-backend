@@ -75,7 +75,7 @@ public class Room {
         synchronized (Main.LOCK) {
             this.roundNumber = RoundNumber.values()[this.roundNumber.ordinal() + 1];
         }
-        this.subRound = 0;
+        this.subRound = 1;
         this.deck.clearDeck();
         this.deck.refill();
         var playerOne = this.players.get(0);
@@ -90,9 +90,9 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room number: " + this.roomNumber.ordinal() + 1 + "\n" +
+        return "Room number: " + (this.roomNumber.ordinal() + 1) + "\n" +
                 "Subround number: " + this.subRound + "\n" +
-                "Round number: " + this.roundNumber.ordinal() + 1 + "\n" +
+                "Round number: " + (this.roundNumber.ordinal() + 1) + "\n" +
                 "Deck size: " + this.deck.getCards().size() + "\n" +
                 this.players.get(0).toString() +
                 this.players.get(1).toString();
