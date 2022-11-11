@@ -6,8 +6,12 @@ import enums.RoomNumber;
 import handlers.ClientHandler;
 import data.Room;
 import handlers.RoomHandler;
+import handlers.RoundKiller;
+import managers.DeckManager;
 import managers.RoomManager;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -44,6 +48,8 @@ public class Main {
         serverForEnemyCard = new ServerSocket(PORT_FOR_ENEMY_CARD);
         RoomManager roomManager = new RoomManager();
         RoomHandler roomHandler = new RoomHandler(roomManager);
+        RoundKiller roundKiller = new RoundKiller(new DeckManager());
+        roundKiller.start();
         roomHandler.start();
         userAccounts.initializeBasicUserAccounts();
         initializeRooms();

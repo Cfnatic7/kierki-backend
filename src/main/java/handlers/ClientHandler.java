@@ -22,8 +22,6 @@ public class ClientHandler extends Thread {
 
     private volatile User loggedInUser;
 
-    private RoomHandler roomHandler;
-
     private final Socket roomSocket;
 
     private final Socket sendEnemyCardSocket;
